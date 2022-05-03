@@ -11,7 +11,8 @@
   "plugins": ["prettier"],
   "extends": ["eslint:recommended", "plugin:prettier/recommended"],
   "rules": {
-    // "prettier/prettier": true,
+    "prettier/prettier": "error",
+    "no-unused-vars":"warn"
   },
   "ignorePatterns": ["tests","out", "dist", "**/*.d.ts","tsconfig.json"]
 }
