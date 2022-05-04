@@ -17,4 +17,5 @@ export async function npmBuild(
     spawnOpts,
     meta
   );
+  return distDir;
 }
