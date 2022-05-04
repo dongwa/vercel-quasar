@@ -8,7 +8,8 @@
   ],
   "scripts": {
     "build": "tsc --build tsconfig.json",
-    "release": "standard-version",
+    "prepublishOnly": "npm run release",
+    "release": "npm run build && standard-version",
     "lint": "eslint --ext .js,.ts,.json ./",
     "fix": "eslint --ext .js,.ts,.json ./ --fix",
     "format": "prettier --config ./.prettierrc --write \"./**/*.{ts,js,json}\" ",
