@@ -13,5 +13,5 @@
     "forceConsistentCasingInFileNames": true, /* Disallow inconsistently-cased references to the same file. */
     "skipDefaultLibCheck": true
   },
-  "exclude": ["node_modules","tests"]
+  "exclude": ["node_modules","tests","dist"]
 }
