@@ -1,7 +1,7 @@
 import path from 'path';
 // const fs = require('fs-extra');
 
-// const { FileBlob, FileFsRef, glob } = require('@vercel/build-utils');
+const { /* FileBlob, FileFsRef,*/ glob } = require('@vercel/build-utils');
 
 // const bridge = require('@vercel/node-bridge');
 
@@ -24,10 +24,10 @@ export function getMountPoint(entrypoint: string) {
   return path.dirname(entrypoint);
 }
 
-// exports.globAndPrefix = async function globAndPrefix(entrypointDir, subDir) {
-//   const paths = await glob('**', path.join(entrypointDir, subDir));
-//   return Object.keys(paths).reduce((c, n) => {
-//     c[`${subDir}/${n}`] = paths[n];
-//     return c;
-//   }, {});
-// };
+export async function globAndPrefix(entrypointDir: string, subDir: string) {
+  const paths = await glob('**', path.join(entrypointDir, subDir));
+  return Object.keys(paths).reduce((c: any, n: string) => {
+    c[`${subDir}/${n}`] = paths[n];
+    return c;
+  }, {});
+}

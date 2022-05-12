@@ -1,6 +1,9 @@
+import fs from 'fs-extra';
+import os from 'os';
 import { BuildConfig } from './config';
 import { Meta, runNpmInstall, runPackageJsonScript } from '@vercel/build-utils';
 import path from 'path';
+import { globAndPrefix } from './utils';
 
 export async function npmBuild(
   config: BuildConfig,
@@ -11,11 +14,21 @@ export async function npmBuild(
   const distDir = path.join(entrypointDir, config.dist);
   await runNpmInstall(entrypointDir, ['--prefer-offline'], spawnOpts, meta);
   await runPackageJsonScript(entrypointDir, 'build', spawnOpts);
+
+  const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'vercel-quasar'));
+
+  await fs.copy(
+    path.join(entrypointDir, 'package.json'),
+    path.join(tempDir, 'package.json')
+  );
+
+  process.chdir(tempDir);
+
   await runNpmInstall(
-    distDir,
+    tempDir,
     ['--prefer-offline', '--production'],
     spawnOpts,
     meta
   );
-  return distDir;
+  return globAndPrefix(tempDir, 'node_modules');
 }
