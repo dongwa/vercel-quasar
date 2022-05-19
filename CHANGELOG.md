@@ -2,6 +2,21 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### 0.0.5 (2022-05-19)
+
+
+### Features
+
+* add build comand ([cfaef59](https://github.com/dongwa/vercel-quasar/commit/cfaef592d15e49a425d2e6acf8fffa77880bfa86))
+* add build script before publlish ([4487b0a](https://github.com/dongwa/vercel-quasar/commit/4487b0a4c1e55b94fab2d655238ddb3237d334eb))
+* initial commit ([c2ea7dd](https://github.com/dongwa/vercel-quasar/commit/c2ea7dd1bb98772913e6a195ce5ec540141b8e1e))
+
+
+### Bug Fixes
+
+* add dist to exclude in tsconfig.json ([6c7fabf](https://github.com/dongwa/vercel-quasar/commit/6c7fabf5054eea787e4fda8df8d0f66f6608db95))
+* add return obj to build func ([1eabdfc](https://github.com/dongwa/vercel-quasar/commit/1eabdfc0bca7ade5476ba4eb3b307ee1e4b6eaf6))
+
 ### [0.0.4](///compare/v0.0.3...v0.0.4) (2022-05-04)
 
 
