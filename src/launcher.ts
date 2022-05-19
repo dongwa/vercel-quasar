@@ -41,14 +41,16 @@ for (const { name, args } of loaders) {
 try {
   process.chdir(__dirname);
 
-  if (!process.env.PROT) process.env.PROT = quasarConfig.ssr.prodProd as any;
+  if (!process.env.PROT)
+    process.env.PROT = quasarConfig.ssr.prodProd || (3000 as any);
   if (!process.env.NODE_ENV) process.env.NODE_ENV = 'production';
+  if (process.env.DEV) {
+    console.log('err dev mode,auto change to prod');
+    process.env.DEV = '';
+    process.env.PROD = true as any;
+  }
 
-  listener = require(path.join(
-    __dirname,
-    quasarConfig.build.distDir || 'dist/ssr',
-    'index.js'
-  ));
+  listener = require(path.join(__dirname, 'index.js'));
   if (listener.default) listener = listener.default;
   if (typeof listener !== 'function' && listener.handler)
     listener = listener.handler;
