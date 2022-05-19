@@ -145,69 +145,6 @@ export function globAndPrefix(
   return globAndRename(pattern, opts, (name) => path.join(prefix, name));
 }
 
-interface NuxtVersion {
-  name: string;
-  version: string;
-  semver: string;
-  suffix: string;
-  section: string;
-}
-
-export function findNuxtDep(pkg: MutablePackageJson): void | NuxtVersion {
-  for (const section of ['dependencies', 'devDependencies'] as const) {
-    const deps = pkg[section];
-    if (deps) {
-      for (const suffix of ['-edge', '']) {
-        const name = 'nuxt' + suffix;
-        const version = deps[name];
-        if (version) {
-          const semver = version.replace(/^[\^~><=]{1,2}/, '');
-          return {
-            name,
-            version,
-            semver,
-            suffix,
-            section,
-          };
-        }
-      }
-    }
-  }
-}
-
-export function preparePkgForProd(pkg: MutablePackageJson): NuxtVersion {
-  // Ensure fields exist
-  if (!pkg.dependencies) {
-    pkg.dependencies = {};
-  }
-  if (!pkg.devDependencies) {
-    pkg.devDependencies = {};
-  }
-
-  // Find nuxt dependency
-  const nuxtDependency = findNuxtDep(pkg);
-  if (!nuxtDependency) {
-    throw new Error('No nuxt dependency found in package.json');
-  }
-
-  // Remove nuxt form dependencies
-  for (const distro of ['nuxt', 'nuxt-start']) {
-    for (const suffix of ['-edge', '']) {
-      delete pkg.dependencies[distro + suffix];
-    }
-  }
-
-  // Delete all devDependencies
-  delete pkg.devDependencies;
-
-  // Add @nuxt/core to dependencies
-  pkg.dependencies['@nuxt/core' + nuxtDependency.suffix] =
-    nuxtDependency.version;
-
-  // Return nuxtDependency
-  return nuxtDependency;
-}
-
 let _step: string | undefined;
 let _stepStartTime: [number, number] | undefined;
 

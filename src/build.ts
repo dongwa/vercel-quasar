@@ -232,6 +232,7 @@ export async function build(opts: BuildOptions): Promise<BuilderOutput> {
     }),
     // ...serverDistFiles,
     ...distFils,
+    ...serverDistFiles,
     ...nodeModules,
   };
 
@@ -258,10 +259,12 @@ export async function build(opts: BuildOptions): Promise<BuilderOutput> {
     files: launcherFiles,
     environment: {
       NODE_ENV: 'production',
+      DEV: '',
+      PROD: 'true',
     },
     //
-    // maxDuration: config.maxDuration,
-    // memory: config.memory,
+    maxDuration: config.maxDuration as number | undefined,
+    memory: config.memory as number | undefined,
   });
 
   // await download(launcherFiles, rootDir)

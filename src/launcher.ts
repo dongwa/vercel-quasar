@@ -46,8 +46,7 @@ try {
   if (!process.env.NODE_ENV) process.env.NODE_ENV = 'production';
   if (process.env.DEV) {
     console.log('err dev mode,auto change to prod');
-    process.env.DEV = '';
-    process.env.PROD = true as any;
+    throw new Error('process.env.DEV is true');
   }
 
   listener = require(path.join(__dirname, 'index.js'));
