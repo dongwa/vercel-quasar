@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.16](https://github.com/dongwa/vercel-quasar/compare/v0.0.15...v0.0.16) (2022-05-19)
+
+
+### Bug Fixes
+
+* fix process.env.DEV err ([b0fbde4](https://github.com/dongwa/vercel-quasar/commit/b0fbde498e038c83b7aef5e8aa7827cff167a417))
+
 ### [0.0.15](https://github.com/dongwa/vercel-quasar/compare/v0.0.14...v0.0.15) (2022-05-19)
 
 ### [0.0.14](https://github.com/dongwa/vercel-quasar/compare/v0.0.13...v0.0.14) (2022-05-19)
