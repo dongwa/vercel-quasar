@@ -1,29 +1,32 @@
-import { Server } from 'http';
 import path from 'path';
+import { getQuasarConfig } from './utils';
 
-//@ts-ignore
-const { Bridge } = require('./bridge.js');
-
+// Create bridge and start listening
+const { Server } = require('http') as typeof import('http'); // eslint-disable-line import/order
+const { Bridge } =
+  require('./vercel__bridge.js') as typeof import('@vercel/node-bridge/bridge');
 let listener: any;
 
 try {
-  if (!process.env.PROT) process.env.PROT = 3010 as any;
+  process.chdir(__dirname);
+  const quasarConfig = getQuasarConfig(__dirname);
+
+  if (!process.env.PROT) process.env.PROT = quasarConfig.ssr.prodProd as any;
   if (!process.env.NODE_ENV) process.env.NODE_ENV = 'production';
 
-  process.chdir(__dirname);
-  listener = require(path.join(__dirname, 'dist/quasar_dev/index.js'));
+  listener = require(path.join(__dirname, quasarConfig.build.distDir));
   if (listener.default) listener = listener.default;
   if (typeof listener !== 'function' && listener.handler)
     listener = listener.handler;
   if (typeof listener !== 'function') {
     listener = (req: any, res: any) => {
       res.writeHead(500, { 'Content-Type': 'text/plain' });
-      res.write(`This is vercel-sapper, your Vercel builder. Turns out we couldn't find your server instance. Did you write \`module.exports = app\`?
+      res.write(`This is vercel-quasar, your Vercel builder. Turns out we couldn't find your server instance. Did you write \`module.exports = app\`?
   
   typeof: ${typeof listener} (expected 'function')
   String: ${String(listener)}
   
-  Read the docs or create an issue: https://github.com/thgh/vercel-sapper`);
+  Read the docs or create an issue: https://github.com/dongwa/vercel-quasar`);
       res.end();
     };
   }
@@ -35,6 +38,6 @@ try {
 const server = new Server(listener);
 
 const bridge = new Bridge(server);
-bridge.listener();
+bridge.listen();
 
-exports.launcher = bridge.launcher;
+export const launcher: typeof bridge.launcher = bridge.launcher;

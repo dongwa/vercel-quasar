@@ -238,7 +238,7 @@ export function startStep(step: string): void {
 
 export interface QuasarConfiguration {
   build: {
-    distDir?: string;
+    distDir: string;
     ignorePublicFolder?: boolean;
     publicPath?: string;
     vueRouterMode?: 'hash' | 'history';

@@ -8,6 +8,7 @@ specifiers:
   '@typescript-eslint/eslint-plugin': ^5.22.0
   '@typescript-eslint/parser': ^5.22.0
   '@vercel/build-utils': ^2.16.0
+  '@vercel/node-bridge': ^2.2.1
   '@vercel/routing-utils': ^1.13.2
   consola: ^2.15.3
   eslint: ^8.14.0
@@ -23,6 +24,7 @@ specifiers:
 
 dependencies:
   '@types/glob': 7.2.0
+  '@vercel/node-bridge': 2.2.1
   '@vercel/routing-utils': 1.13.2
   consola: 2.15.3
   execa: 6.1.0
@@ -926,6 +928,10 @@ packages:
   /@vercel/build-utils/2.16.0:
     resolution: {integrity: sha512-KEkt/uhBCMTca4qtRK9F9/M4kV712rkWKYm2p7xo4HVKrF5e+oSEQKF6zDHzUk0R0YOYY1aL3it01r440YsABA==}
     dev: true
+
+  /@vercel/node-bridge/2.2.1:
+    resolution: {integrity: sha512-GJdBio0nKyxvFwfLcj6CMp2s22d5V6K9tmhmHkQcaiFwdKWK/Pa7jngiO84a09fvX+DFaOtpalJuxQa5LAJ9xQ==}
+    dev: false
 
   /@vercel/routing-utils/1.13.2:
     resolution: {integrity: sha512-r2PtSY98L5Al/U/bpS20Xj0FJ6wjJCj/s6a545EkdXlARI8F8l0Gh3nyAdhoYrrKihKcmyCqDaVUaks2/c8XoA==}

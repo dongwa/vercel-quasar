@@ -46,6 +46,7 @@
   },
   "dependencies": {
     "@types/glob": "^7.2.0",
+    "@vercel/node-bridge": "^2.2.1",
     "@vercel/routing-utils": "^1.13.2",
     "consola": "^2.15.3",
     "execa": "^6.1.0",
