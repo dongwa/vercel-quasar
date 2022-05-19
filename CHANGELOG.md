@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.12](https://github.com/dongwa/vercel-quasar/compare/v0.0.11...v0.0.12) (2022-05-19)
+
+
+### Bug Fixes
+
+* **launcher:** add defaultQuasarConfig ([e4b1994](https://github.com/dongwa/vercel-quasar/commit/e4b19948e6ee39940ca393ec9a65d3c5ad8031de))
+
 ### [0.0.11](https://github.com/dongwa/vercel-quasar/compare/v0.0.10...v0.0.11) (2022-05-19)
 
 
