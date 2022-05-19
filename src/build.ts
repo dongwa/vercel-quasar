@@ -21,8 +21,6 @@ import {
   getSpawnOptions,
   Lambda,
   runNpmInstall,
-  execAsync,
-  execCommand,
   glob,
   FileBlob,
   createLambda,

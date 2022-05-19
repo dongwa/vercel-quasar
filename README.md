@@ -17,7 +17,6 @@ Vercel builder for Quasar with SSR enabled
   "version": 2,
   "builds": [
     { "src": "package.json", "use": "vercel-quasar" },
-    {"src":"dist/quasar.dev/index.js","use":"@vercel/node"}
     ]
 }
 ```

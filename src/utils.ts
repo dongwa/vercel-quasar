@@ -4,7 +4,7 @@ import { SpawnOptions } from 'child_process';
 import { glob, Files, PackageJson } from '@vercel/build-utils';
 import consola from 'consola';
 import jiti from 'jiti';
-import { execa, ExecaReturnValue } from 'execa';
+import execa, { ExecaReturnValue } from 'execa';
 import fs from 'fs-extra';
 
 // import type { NuxtConfig as NuxtConfiguration } from '@nuxt/types';
@@ -57,7 +57,13 @@ export function exec(
   args = args.filter(Boolean);
 
   consola.log('Running', cmd, ...args);
-
+  const stdio = Array.isArray(opts.stdio)
+    ? (opts.stdio.filter(Boolean) as Array<
+        SpawnOptions['stdio'] extends Array<infer R>
+          ? Array<NonNullable<R>>
+          : never
+      > as any)
+    : opts.stdio;
   return execa('npx', [cmd, ...args], {
     stdout: process.stdout,
     stderr: process.stderr,
@@ -67,14 +73,8 @@ export function exec(
       NODE_OPTIONS: '--max_old_space_size=3000',
       ...env,
     },
-    ...opts,
-    stdio: Array.isArray(opts.stdio)
-      ? (opts.stdio.filter(Boolean) as Array<
-          SpawnOptions['stdio'] extends Array<infer R>
-            ? Array<NonNullable<R>>
-            : never
-        > as any)
-      : opts.stdio,
+    ...(opts as any),
+    stdio,
   });
 }
 
