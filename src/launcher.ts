@@ -14,7 +14,11 @@ try {
   if (!process.env.PROT) process.env.PROT = quasarConfig.ssr.prodProd as any;
   if (!process.env.NODE_ENV) process.env.NODE_ENV = 'production';
 
-  listener = require(path.join(__dirname, quasarConfig.build.distDir));
+  listener = require(path.join(
+    __dirname,
+    quasarConfig.build.distDir,
+    'index.js'
+  ));
   if (listener.default) listener = listener.default;
   if (typeof listener !== 'function' && listener.handler)
     listener = listener.handler;
