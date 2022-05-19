@@ -6,6 +6,10 @@
   "files": [
     "dist"
   ],
+  "exports": {
+    ".": "./dist/index.js",
+    "./launcher": "./dist/launcher.js"
+  },
   "scripts": {
     "build": "tsc --build tsconfig.json",
     "prepublishOnly": "npm run release",
@@ -13,7 +17,8 @@
     "lint": "eslint --ext .js,.ts,.json ./",
     "fix": "eslint --ext .js,.ts,.json ./ --fix",
     "format": "prettier --config ./.prettierrc --write \"./**/*.{ts,js,json}\" ",
-    "test": "jest"
+    "test": "jest",
+    "ver": "standard-version"
   },
   "author": "dongwa",
   "license": "MIT",
