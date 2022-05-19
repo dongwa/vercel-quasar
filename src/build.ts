@@ -112,9 +112,7 @@ export async function build(opts: BuildOptions): Promise<BuilderOutput> {
   //   }
   // }
   // Read nuxt.config.js
-  const quasarConfigName = './quasar.config.js';
-  const quasarConfigFile = getQuasarConfig(entrypointPath, quasarConfigName);
-  consola.log('quasarConfig is', quasarConfigFile);
+  const quasarConfigFile = getQuasarConfig(entrypointPath);
   // Read options from nuxt.config.js otherwise set sensible defaults
   // const staticDir =
   //   quasarConfigFile.dir && quasarConfigFile.dir.static
@@ -192,7 +190,6 @@ export async function build(opts: BuildOptions): Promise<BuilderOutput> {
   const serverDistDir = path.join(distDir, 'server');
   const serverDistFiles = await glob('**', serverDistDir);
   const distFils = await glob('**', distDir);
-  consola.log('distFils', distFils);
 
   // const serverDistFiles = await globAndPrefix(
   //   '**',
