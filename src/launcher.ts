@@ -49,7 +49,7 @@ try {
     throw new Error('process.env.DEV is true');
   }
 
-  listener = require(path.join(__dirname, 'index.js'));
+  listener = require(path.join(__dirname, 'server/server-entry.js'));
   if (listener.default) listener = listener.default;
   if (typeof listener !== 'function' && listener.handler)
     listener = listener.handler;
