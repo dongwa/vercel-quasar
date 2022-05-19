@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.8](https://github.com/dongwa/vercel-quasar/compare/v0.0.7...v0.0.8) (2022-05-19)
+
+
+### Bug Fixes
+
+* fix execa ERR_REQUIRE_ESM ([2695a87](https://github.com/dongwa/vercel-quasar/commit/2695a87b2475a7c23a02b0c528eda908fddb1556))
+
 ### [0.0.7](https://github.com/dongwa/vercel-quasar/compare/v0.0.6...v0.0.7) (2022-05-19)
 
 ### [0.0.6](https://github.com/dongwa/vercel-quasar/compare/v0.0.5...v0.0.6) (2022-05-19)
