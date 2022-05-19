@@ -7,19 +7,6 @@ const { Bridge } =
 let listener: any;
 let quasarConfig;
 
-const defaultQuasarConfig = {
-  build: {
-    publicPath: '/',
-    vueRouterMode: 'hash',
-    distDir: 'dist/ssr',
-  },
-  ssr: {
-    pwa: false,
-    prodProd: 3000,
-    ssrPwaHtmlFilename: 'offline.html',
-  },
-};
-
 const loaders = [
   { name: 'jiti', args: [] },
   {
@@ -42,7 +29,6 @@ for (const { name, args } of loaders) {
       prod: true,
     });
     quasarConfig = config.default || config;
-    quasarConfig = Object.assign(defaultQuasarConfig, quasarConfig);
     break;
   } catch (err) {
     if (name === 'esm') {
@@ -60,7 +46,7 @@ try {
 
   listener = require(path.join(
     __dirname,
-    quasarConfig.build.distDir,
+    quasarConfig.build.distDir || 'dist/ssr',
     'index.js'
   ));
   if (listener.default) listener = listener.default;

@@ -282,8 +282,19 @@ export function getQuasarConfig(
     prod: true,
   });
   quasarConfigFile = quasarConfigFile.default || quasarConfigFile;
-  consola.log('load quasar config', quasarConfigFile);
-  return Object.assign(defaultQuasarConfig, quasarConfigFile);
+  for (let key in defaultQuasarConfig.build) {
+    if (!quasarConfigFile.build[key])
+      quasarConfigFile.build[key] =
+        defaultQuasarConfig.build[
+          key as keyof typeof defaultQuasarConfig['build']
+        ];
+  }
+  for (let key in defaultQuasarConfig.ssr) {
+    if (!quasarConfigFile.ssr[key])
+      quasarConfigFile.ssr[key] =
+        defaultQuasarConfig.ssr[key as keyof typeof defaultQuasarConfig['ssr']];
+  }
+  return quasarConfigFile;
 }
 
 export function getNuxtConfigName(rootDir: string): string {

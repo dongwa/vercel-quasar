@@ -114,6 +114,8 @@ export async function build(opts: BuildOptions): Promise<BuilderOutput> {
   // Read nuxt.config.js
   const quasarConfigName = 'quasar.config.js';
   const quasarConfigFile = getQuasarConfig(entrypointPath);
+  consola.log('load quasar config', quasarConfigFile);
+
   // Read options from nuxt.config.js otherwise set sensible defaults
   // const staticDir =
   //   quasarConfigFile.dir && quasarConfigFile.dir.static
@@ -141,6 +143,7 @@ export async function build(opts: BuildOptions): Promise<BuilderOutput> {
   // ----------------- Install ssr dependencies -----------------
   startStep('Install dist dependencies');
 
+  //TODO: remove || 'dist/ssr' and log
   const distDir = path.join(entrypointPath, quasarConfigFile.build.distDir);
   // Get folder where we'll store node_modules
   const distModulesPath = path.join(distDir, 'node_modules');
