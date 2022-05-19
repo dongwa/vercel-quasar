@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.11](https://github.com/dongwa/vercel-quasar/compare/v0.0.10...v0.0.11) (2022-05-19)
+
+
+### Bug Fixes
+
+* fix lancher.ts ([95df856](https://github.com/dongwa/vercel-quasar/commit/95df856f0a37048301218cf98b842e651b4bff91))
+
 ### [0.0.10](https://github.com/dongwa/vercel-quasar/compare/v0.0.9...v0.0.10) (2022-05-19)
 
 ### [0.0.9](https://github.com/dongwa/vercel-quasar/compare/v0.0.8...v0.0.9) (2022-05-19)
