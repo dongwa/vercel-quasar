@@ -49,22 +49,22 @@ try {
     throw new Error('process.env.DEV is true');
   }
 
-  listener = require(path.join(__dirname, 'server/server-entry.js'));
+  listener = require(path.join(__dirname, 'index.js'));
   if (listener.default) listener = listener.default;
   if (typeof listener !== 'function' && listener.handler)
     listener = listener.handler;
-  if (typeof listener !== 'function') {
-    listener = (req: any, res: any) => {
-      res.writeHead(500, { 'Content-Type': 'text/plain' });
-      res.write(`This is vercel-quasar, your Vercel builder. Turns out we couldn't find your server instance. Did you write \`module.exports = app\`?
-  
-  typeof: ${typeof listener} (expected 'function')
-  String: ${String(listener)}
-  
-  Read the docs or create an issue: https://github.com/dongwa/vercel-quasar`);
-      res.end();
-    };
-  }
+  // if (typeof listener !== 'function') {
+  //   listener = (req: any, res: any) => {
+  //     res.writeHead(500, { 'Content-Type': 'text/plain' });
+  //     res.write(`This is vercel-quasar, your Vercel builder. Turns out we couldn't find your server instance. Did you write \`module.exports = app\`?
+
+  // typeof: ${typeof listener} (expected 'function')
+  // String: ${String(listener)}
+
+  // Read the docs or create an issue: https://github.com/dongwa/vercel-quasar`);
+  //     res.end();
+  //   };
+  // }
 } catch (error) {
   console.error('Server is not listening', error);
   process.exit(1);
