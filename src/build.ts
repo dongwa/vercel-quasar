@@ -10,6 +10,7 @@ import {
   getQuasarConfig,
   exec,
   globAndPrefix,
+  endStep,
 } from './utils';
 import {
   BuildOptions,
@@ -23,6 +24,8 @@ import {
   execAsync,
   execCommand,
   glob,
+  FileBlob,
+  createLambda,
 } from '@vercel/build-utils';
 
 import type { Route } from '@vercel/routing-utils';
@@ -111,7 +114,7 @@ export async function build(opts: BuildOptions): Promise<BuilderOutput> {
   //   }
   // }
   // Read nuxt.config.js
-  const quasarConfigName = 'quasar.config.js';
+  const quasarConfigName = './quasar.config.js';
   const quasarConfigFile = getQuasarConfig(entrypointPath, quasarConfigName);
   consola.log('quasarConfig is', quasarConfigFile);
   // Read options from nuxt.config.js otherwise set sensible defaults
@@ -119,17 +122,16 @@ export async function build(opts: BuildOptions): Promise<BuilderOutput> {
   //   quasarConfigFile.dir && quasarConfigFile.dir.static
   //     ? quasarConfigFile.dir.static
   //     : 'static';
-  let publicPath = (
-    quasarConfigFile.build && quasarConfigFile.build.publicPath
-      ? quasarConfigFile.build.publicPath
-      : '/_quasar/'
-  ).replace(/^\//, '');
+  let publicPath = (quasarConfigFile.build.publicPath || '/_quasar/').replace(
+    /^\//,
+    ''
+  );
   // if (hasProtocol(publicPath)) {
   //   publicPath = '_quasar/';
   // }
   const buildDir = quasarConfigFile.build.distDir
     ? path.relative(entrypointPath, quasarConfigFile.build.distDir)
-    : '.quasar';
+    : 'dist/ssr';
   const srcDir = '.';
   const lambdaName = 'index';
   const usesServerMiddleware =
@@ -185,15 +187,20 @@ export async function build(opts: BuildOptions): Promise<BuilderOutput> {
 
   // Client dist files
   const clientDistDir = path.join(distDir, 'client');
-  const clientDistFiles = await globAndPrefix('**', clientDistDir, publicPath);
+  // const clientDistFiles = await globAndPrefix('**', clientDistDir, publicPath);
+  const clientDistFiles = await glob('**', clientDistDir);
 
   // Server dist files
   const serverDistDir = path.join(distDir, 'server');
-  const serverDistFiles = await globAndPrefix(
-    '**',
-    serverDistDir,
-    path.join(buildDir, 'dist/server')
-  );
+  const serverDistFiles = await glob('**', serverDistDir);
+  const distFils = await glob('**', distDir);
+  consola.log('distFils', distFils);
+
+  // const serverDistFiles = await globAndPrefix(
+  //   '**',
+  //   serverDistDir,
+  //   path.join(distDir, 'server')
+  // );
 
   // Generated static files
   const generatedDir = path.join(entrypointPath, 'dist');
@@ -209,24 +216,18 @@ export async function build(opts: BuildOptions): Promise<BuilderOutput> {
   const lambdas: Record<string, Lambda> = {};
 
   const launcherPath = path.join(__dirname, 'launcher.js');
-  const launcherSrc = (await fs.readFile(launcherPath, 'utf8'))
-    .replace(/__NUXT_SUFFIX__/g, nuxtDep.suffix)
-    .replace(/__NUXT_CONFIG__/g, './' + nuxtConfigName)
-    .replace(
-      /\/\* __ENABLE_INTERNAL_SERVER__ \*\/ *true/g,
-      String(usesServerMiddleware)
-    );
+  const launcherSrc = (await fs.readFile(launcherPath, 'utf8')).replace(
+    /\/\* __ENABLE_INTERNAL_SERVER__ \*\/ *true/g,
+    String(usesServerMiddleware)
+  );
 
   const launcherFiles = {
     'vercel__launcher.js': new FileBlob({ data: launcherSrc }),
     'vercel__bridge.js': new FileFsRef({
       fsPath: require('@vercel/node-bridge'),
     }),
-    [nuxtConfigName]: new FileFsRef({
-      fsPath: path.resolve(entrypointPath, nuxtConfigName),
-    }),
-    ...serverDistFiles,
-    ...compiledTypescriptFiles,
+    // ...serverDistFiles,
+    ...distFils,
     ...nodeModules,
   };
 
@@ -255,8 +256,8 @@ export async function build(opts: BuildOptions): Promise<BuilderOutput> {
       NODE_ENV: 'production',
     },
     //
-    maxDuration: config.maxDuration,
-    memory: config.memory,
+    // maxDuration: config.maxDuration,
+    // memory: config.memory,
   });
 
   // await download(launcherFiles, rootDir)
@@ -267,7 +268,7 @@ export async function build(opts: BuildOptions): Promise<BuilderOutput> {
     output: {
       ...lambdas,
       ...clientDistFiles,
-      ...staticFiles,
+      // ...staticFiles,
       ...generatedPagesFiles,
     },
     routes: [
@@ -275,14 +276,12 @@ export async function build(opts: BuildOptions): Promise<BuilderOutput> {
         src: `/${publicPath}.+`,
         headers: { 'Cache-Control': 'max-age=31557600' },
       },
-      ...Object.keys(staticFiles).map((file) => ({
-        src: `/${file}`,
-        headers: { 'Cache-Control': 'max-age=31557600' },
-      })),
+      // ...Object.keys(staticFiles).map((file) => ({
+      //   src: `/${file}`,
+      //   headers: { 'Cache-Control': 'max-age=31557600' },
+      // })),
       { handle: 'filesystem' },
-      { src: '/(.*)', dest: '/index' },
+      { src: '/(.*)', dest: '/' },
     ],
   };
-
-  return {} as any;
 }

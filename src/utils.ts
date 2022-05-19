@@ -274,10 +274,13 @@ const defaultQuasarConfig: QuasarConfiguration = {
 
 export function getQuasarConfig(
   rootDir: string,
-  nuxtConfigName: string
+  quasarConfigName = './quasar.config.js'
 ): QuasarConfiguration {
   const load = jiti(rootDir);
-  let quasarConfigFile = load(nuxtConfigName);
+  let quasarConfigFile = load(quasarConfigName)({
+    dev: false,
+    prod: true,
+  });
   quasarConfigFile = quasarConfigFile.default || quasarConfigFile;
   consola.log('load quasar config', quasarConfigFile);
   return Object.assign(quasarConfigFile, defaultQuasarConfig);
