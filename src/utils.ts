@@ -283,7 +283,7 @@ export function getQuasarConfig(
   });
   quasarConfigFile = quasarConfigFile.default || quasarConfigFile;
   consola.log('load quasar config', quasarConfigFile);
-  return Object.assign(quasarConfigFile, defaultQuasarConfig);
+  return Object.assign(defaultQuasarConfig, quasarConfigFile);
 }
 
 export function getNuxtConfigName(rootDir: string): string {

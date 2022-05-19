@@ -6,6 +6,20 @@ const { Bridge } =
   require('./vercel__bridge.js') as typeof import('@vercel/node-bridge/bridge');
 let listener: any;
 let quasarConfig;
+
+const defaultQuasarConfig = {
+  build: {
+    publicPath: '/',
+    vueRouterMode: 'hash',
+    distDir: 'dist/ssr',
+  },
+  ssr: {
+    pwa: false,
+    prodProd: 3000,
+    ssrPwaHtmlFilename: 'offline.html',
+  },
+};
+
 const loaders = [
   { name: 'jiti', args: [] },
   {
@@ -28,6 +42,7 @@ for (const { name, args } of loaders) {
       prod: true,
     });
     quasarConfig = config.default || config;
+    quasarConfig = Object.assign(defaultQuasarConfig, quasarConfig);
     break;
   } catch (err) {
     if (name === 'esm') {
@@ -37,7 +52,6 @@ for (const { name, args } of loaders) {
     }
   }
 }
-console.log('quasar.congfig.js:', quasarConfig);
 try {
   process.chdir(__dirname);
 
