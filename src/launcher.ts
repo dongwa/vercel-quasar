@@ -1,15 +1,45 @@
 import path from 'path';
-import { getQuasarConfig } from './utils';
 
 // Create bridge and start listening
 const { Server } = require('http') as typeof import('http'); // eslint-disable-line import/order
 const { Bridge } =
   require('./vercel__bridge.js') as typeof import('@vercel/node-bridge/bridge');
 let listener: any;
-
+let quasarConfig;
+const loaders = [
+  { name: 'jiti', args: [] },
+  {
+    name: 'esm',
+    args: [
+      module,
+      {
+        cjs: {
+          dedefault: true,
+        },
+      },
+    ],
+  },
+];
+for (const { name, args } of loaders) {
+  try {
+    const load = require(name)(...args);
+    const config = load('./quasar.config.js')({
+      dev: false,
+      prod: true,
+    });
+    quasarConfig = config.default || config;
+    break;
+  } catch (err) {
+    if (name === 'esm') {
+      throw new Error(
+        `Could not load Quasar configuration. Make sure all dependencies are listed in package.json dependencies or in serverFiles within builder options:\n ${err}`
+      );
+    }
+  }
+}
+console.log('quasar.congfig.js:', quasarConfig);
 try {
   process.chdir(__dirname);
-  const quasarConfig = getQuasarConfig(__dirname);
 
   if (!process.env.PROT) process.env.PROT = quasarConfig.ssr.prodProd as any;
   if (!process.env.NODE_ENV) process.env.NODE_ENV = 'production';

@@ -112,6 +112,7 @@ export async function build(opts: BuildOptions): Promise<BuilderOutput> {
   //   }
   // }
   // Read nuxt.config.js
+  const quasarConfigName = 'quasar.config.js';
   const quasarConfigFile = getQuasarConfig(entrypointPath);
   // Read options from nuxt.config.js otherwise set sensible defaults
   // const staticDir =
@@ -222,6 +223,9 @@ export async function build(opts: BuildOptions): Promise<BuilderOutput> {
     'vercel__launcher.js': new FileBlob({ data: launcherSrc }),
     'vercel__bridge.js': new FileFsRef({
       fsPath: require('@vercel/node-bridge'),
+    }),
+    [quasarConfigName]: new FileFsRef({
+      fsPath: path.resolve(entrypointPath, quasarConfigName),
     }),
     // ...serverDistFiles,
     ...distFils,
