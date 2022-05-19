@@ -138,19 +138,20 @@ export async function build(opts: BuildOptions): Promise<BuilderOutput> {
   await exec('quasar', ['build', '-m', 'ssr'], spawnOpts);
 
   // ----------------- Install ssr dependencies -----------------
-  startStep('Install dependencies');
+  startStep('Install dist dependencies');
 
-  const distDir = path.join(
-    entrypointPath,
-    quasarConfigFile.build.distDir || 'dist/ssr'
-  );
+  const distDir = path.join(entrypointPath, quasarConfigFile.build.distDir);
+  // Get folder where we'll store node_modules
+  const distModulesPath = path.join(distDir, 'node_modules');
+  // Cache dir
+  const distCachePath = path.resolve(entrypointPath, '.quasar_dist_cache');
+  await fs.mkdirp(distCachePath);
+
+  const distYarnCachePath = path.join(distCachePath, 'yarn');
+  await fs.mkdirp(distYarnCachePath);
 
   // Use node_modules_prod
   await prepareNodeModules(distDir, 'node_modules_prod');
-
-  // Only keep core dependency
-  // const nuxtDep = preparePkgForProd(pkg);
-  // await fs.writeJSON('package.json', pkg);
 
   await runNpmInstall(
     distDir,
@@ -159,8 +160,8 @@ export async function build(opts: BuildOptions): Promise<BuilderOutput> {
       '--pure-lockfile',
       '--non-interactive',
       '--production=true',
-      `--modules-folder=${modulesPath}`,
-      `--cache-folder=${yarnCachePath}`,
+      `--modules-folder=${distModulesPath}`,
+      `--cache-folder=${distYarnCachePath}`,
     ],
     {
       ...spawnOpts,
@@ -189,6 +190,7 @@ export async function build(opts: BuildOptions): Promise<BuilderOutput> {
   // Server dist files
   const serverDistDir = path.join(distDir, 'server');
   const serverDistFiles = await glob('**', serverDistDir);
+
   const distFils = await glob('**', distDir);
 
   // const serverDistFiles = await globAndPrefix(
@@ -198,13 +200,13 @@ export async function build(opts: BuildOptions): Promise<BuilderOutput> {
   // );
 
   // Generated static files
-  const generatedDir = path.join(entrypointPath, 'dist');
-  const generatedPagesFiles = config.generateStaticRoutes
-    ? await globAndPrefix('**/*.*', generatedDir, './')
-    : {};
+  // const generatedDir = path.join(entrypointPath, 'dist');
+  // const generatedPagesFiles = config.generateStaticRoutes
+  //   ? await globAndPrefix('**/*.*', generatedDir, './')
+  //   : {};
 
   // node_modules_prod
-  const nodeModulesDir = path.join(entrypointPath, 'node_modules_prod');
+  const nodeModulesDir = path.join(distDir, 'node_modules_prod');
   const nodeModules = await globAndPrefix('**', nodeModulesDir, 'node_modules');
 
   // Lambdas
@@ -262,9 +264,10 @@ export async function build(opts: BuildOptions): Promise<BuilderOutput> {
   return {
     output: {
       ...lambdas,
-      ...clientDistFiles,
+      ...distFils,
+      // ...clientDistFiles,
       // ...staticFiles,
-      ...generatedPagesFiles,
+      // ...generatedPagesFiles,
     },
     routes: [
       {
