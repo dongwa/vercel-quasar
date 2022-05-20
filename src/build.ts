@@ -240,6 +240,7 @@ export async function build(opts: BuildOptions): Promise<BuilderOutput> {
       fsPath: path.resolve(entrypointPath, quasarConfigName),
     }),
     ...distFils,
+    ...serverDistFiles,
     ...nodeModules,
   };
 

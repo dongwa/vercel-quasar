@@ -34,10 +34,14 @@ try {
   if (listener.default) listener = listener.default;
   if (typeof listener !== 'function' && listener.handler)
     listener = listener.handler;
+  if (typeof listener?.then === 'function') {
+    listener.then((res: any) => {
+      listener = res;
+    });
+  }
   const listenerType = typeof listener;
   const oldListener = listener;
   console.log('listener:', typeof listener, listener);
-
   if (typeof listener !== 'function') {
     listener = (req: any, res: any) => {
       res.writeHead(500, { 'Content-Type': 'text/plain' });
