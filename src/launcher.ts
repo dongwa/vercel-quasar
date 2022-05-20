@@ -1,7 +1,7 @@
 import path from 'path';
 
 // Create bridge and start listening
-const { Server } = require('http') as typeof import('http'); // eslint-disable-line import/order
+const { Server } = require('http') as typeof import('http');
 const { Bridge } =
   require('./vercel__bridge.js') as typeof import('@vercel/node-bridge/bridge');
 let listener: any;
