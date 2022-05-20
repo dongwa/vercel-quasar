@@ -7,42 +7,23 @@ const { Bridge } =
 let listener: any;
 let quasarConfig;
 
-const loaders = [
-  { name: 'jiti', args: [] },
-  {
-    name: 'esm',
-    args: [
-      module,
-      {
-        cjs: {
-          dedefault: true,
-        },
-      },
-    ],
-  },
-];
-for (const { name, args } of loaders) {
-  try {
-    const load = require(name)(...args);
-    const config = load('./quasar.config.js')({
-      dev: false,
-      prod: true,
-    });
-    quasarConfig = config.default || config;
-    break;
-  } catch (err) {
-    if (name === 'esm') {
-      throw new Error(
-        `Could not load Quasar configuration. Make sure all dependencies are listed in package.json dependencies or in serverFiles within builder options:\n ${err}`
-      );
-    }
-  }
+try {
+  const jiti = require('jiti')(__dirname);
+  const config = jiti('./quasar.config.js', {
+    dev: false,
+    prod: true,
+  });
+  quasarConfig = config.default || config;
+} catch (err: any) {
+  throw new Error(
+    `Could not load Quasar configuration. Make sure all dependencies are listed in package.json dependencies or in serverFiles within builder options:\n ${err}`
+  );
 }
+
 try {
   process.chdir(__dirname);
-
-  if (!process.env.PROT)
-    process.env.PROT = quasarConfig.ssr.prodProd || (3000 as any);
+  // if (!process.env.PROT) process.env.PROT = 3000 as any;
+  process.env.PROT = quasarConfig?.ssr?.prodProd || (3000 as any);
   if (!process.env.NODE_ENV) process.env.NODE_ENV = 'production';
   if (process.env.DEV) {
     console.log('err dev mode,auto change to prod');
@@ -53,21 +34,26 @@ try {
   if (listener.default) listener = listener.default;
   if (typeof listener !== 'function' && listener.handler)
     listener = listener.handler;
-  const listenerType = typeof listener;
-  const oldListener = listener;
-  console.log('listener:', typeof listener, listener);
-
-  if (typeof listener !== 'function') {
-    listener = (req: any, res: any) => {
-      res.writeHead(500, { 'Content-Type': 'text/plain' });
-      res.write(`This is vercel-quasar, your Vercel builder. Turns out we couldn't find your server instance. Did you write \`module.exports = app\`?
-
-  typeof: ${listenerType} (expected 'function')
-  String: ${String(oldListener)}
-
-  Read the docs or create an issue: https://github.com/dongwa/vercel-quasar`);
-      res.end();
-    };
+  if (typeof listener?.then === 'function') {
+    listener.then((res: any) => {
+      listener = res;
+    });
+  } else {
+    const listenerType = typeof listener;
+    const oldListener = listener;
+    console.log('listener:', typeof listener, listener);
+    if (typeof listener !== 'function') {
+      listener = (req: any, res: any) => {
+        res.writeHead(500, { 'Content-Type': 'text/plain' });
+        res.write(`This is vercel-quasar, your Vercel builder. Turns out we couldn't find your server instance. Did you write \`module.exports = app\`?
+  
+    typeof: ${listenerType} (expected 'function')
+    String: ${String(oldListener)}
+  
+    Read the docs or create an issue: https://github.com/dongwa/vercel-quasar`);
+        res.end();
+      };
+    }
   }
 } catch (error) {
   console.error('Server is not listening', error);

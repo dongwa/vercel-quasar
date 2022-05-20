@@ -23,7 +23,7 @@ import {
   runNpmInstall,
   glob,
   FileBlob,
-  createLambda,
+  runPackageJsonScript,
 } from '@vercel/build-utils';
 
 import type { Route } from '@vercel/routing-utils';
@@ -40,9 +40,9 @@ export async function build(opts: BuildOptions): Promise<BuilderOutput> {
   startStep('Prepare build');
   validateEntrypoint(entrypoint);
 
-  // Get Nuxt directory
+  // Get quasar directory
   const entrypointDirname = path.dirname(entrypoint);
-  // Get Nuxt path
+  // Get quasar path
   const entrypointPath = path.join(workPath, entrypointDirname);
   // Get folder where we'll store node_modules
   const modulesPath = path.join(entrypointPath, 'node_modules');
@@ -103,20 +103,13 @@ export async function build(opts: BuildOptions): Promise<BuilderOutput> {
   );
 
   // ----------------- Pre build -----------------
-  // const buildSteps = ['build'];
-  // for (const step of buildSteps) {
-  //   if (pkg.scripts && Object.keys(pkg.scripts).includes(step)) {
-  //     startStep(`Pre build (${step})`);
-  //     await runPackageJsonScript(entrypointPath, step, spawnOpts);
-  //     break;
-  //   }
-  // }
-  // Read nuxt.config.js
+
+  // Read quasar.config.js
   const quasarConfigName = 'quasar.config.js';
   const quasarConfigFile = getQuasarConfig(entrypointPath);
   consola.log('load quasar config', quasarConfigFile);
 
-  // Read options from nuxt.config.js otherwise set sensible defaults
+  // Read options from quasar.config.js otherwise set sensible defaults
   // const staticDir =
   //   quasarConfigFile.dir && quasarConfigFile.dir.static
   //     ? quasarConfigFile.dir.static
@@ -128,22 +121,38 @@ export async function build(opts: BuildOptions): Promise<BuilderOutput> {
   // if (hasProtocol(publicPath)) {
   //   publicPath = '_quasar/';
   // }
-  const buildDir = quasarConfigFile.build.distDir
-    ? path.relative(entrypointPath, quasarConfigFile.build.distDir)
-    : 'dist/ssr';
-  const srcDir = '.';
+  // const buildDir = quasarConfigFile.build.distDir
+  //   ? path.relative(entrypointPath, quasarConfigFile.build.distDir)
+  //   : 'dist/ssr';
+  // const srcDir = '.';
   const lambdaName = 'index';
   const usesServerMiddleware =
     config.internalServer !== undefined
       ? config.internalServer
       : !!quasarConfigFile.ssr.middlewares;
+  let hasCustomBuildCmd = false;
+  const buildSteps = ['build:ssr', 'build'];
+  for (const step of buildSteps) {
+    if (pkg.scripts && Object.keys(pkg.scripts).includes(step)) {
+      hasCustomBuildCmd = true;
+      startStep(`build (${step})`);
+      await runPackageJsonScript(entrypointPath, step, spawnOpts);
+      break;
+    }
+  }
 
-  await exec('quasar', ['build', '-m', 'ssr'], spawnOpts);
+  if (!hasCustomBuildCmd) {
+    consola.log(
+      'not find custom build command,will use default build command: quasar build -m ssr\n',
+      'if you want to use custom it,add a build:ssr or build script to your package.json'
+    );
+    startStep(`build step`);
+    await exec('quasar', ['build', '-m', 'ssr'], spawnOpts);
+  }
 
   // ----------------- Install ssr dependencies -----------------
   startStep('Install dist dependencies');
 
-  //TODO: remove || 'dist/ssr' and log
   const distDir = path.join(entrypointPath, quasarConfigFile.build.distDir);
   // Get folder where we'll store node_modules
   const distModulesPath = path.join(distDir, 'node_modules');
@@ -187,9 +196,9 @@ export async function build(opts: BuildOptions): Promise<BuilderOutput> {
   // );
 
   // Client dist files
-  const clientDistDir = path.join(distDir, 'client');
+  // const clientDistDir = path.join(distDir, 'client');
   // const clientDistFiles = await globAndPrefix('**', clientDistDir, publicPath);
-  const clientDistFiles = await glob('**', clientDistDir);
+  // const clientDistFiles = await glob('**', clientDistDir);
 
   // Server dist files
   const serverDistDir = path.join(distDir, 'server');
@@ -230,7 +239,6 @@ export async function build(opts: BuildOptions): Promise<BuilderOutput> {
     [quasarConfigName]: new FileFsRef({
       fsPath: path.resolve(entrypointPath, quasarConfigName),
     }),
-    // ...serverDistFiles,
     ...distFils,
     ...serverDistFiles,
     ...nodeModules,
@@ -252,8 +260,8 @@ export async function build(opts: BuildOptions): Promise<BuilderOutput> {
     Object.assign(launcherFiles, files);
   }
 
-  // lambdaName will be titled index, unless specified in nuxt.config.js
-  lambdas[lambdaName] = await createLambda({
+  // lambdaName will be titled index, unless specified in quasar.config.js
+  lambdas[lambdaName] = new Lambda({
     handler: 'vercel__launcher.launcher',
     runtime: nodeVersion.runtime,
     files: launcherFiles,
@@ -275,9 +283,6 @@ export async function build(opts: BuildOptions): Promise<BuilderOutput> {
     output: {
       ...lambdas,
       ...distFils,
-      // ...clientDistFiles,
-      // ...staticFiles,
-      // ...generatedPagesFiles,
     },
     routes: [
       {

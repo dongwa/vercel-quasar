@@ -1,9 +1,14 @@
 # vercel-quasar
 Vercel builder for Quasar with SSR enabled
-# useage
-## 1. change listen function in your src-ssr/server.js file
-### 1.1. remove all async and await 
-### 1.2. return { handler: ssrHandler }
+
+Help you to deploy [Quasar](https://quasar.dev) application on [Vercel](https://vercel.com) in SSR mode
+
+# usage
+## 1. change the listen function in your `src-ssr/server.js` file
+- remove all async and await. It is important,making sure the listen function will not return the content of the asynchronous
+- return { handler: ssrHandler }
+- example 
+![server.js.example.ng](https://raw.githubusercontent.com/dongwa/vercel-quasar/dev/imgs/server.js.example.png)
 ``` js
 /**
  * You need to make the server listen to the indicated port
@@ -34,11 +39,10 @@ export function listen({ app, port, isReady, ssrHandler }) {
   }
 }
 ```
-### 1.3. example 
-![server.js.example.ng](https://raw.githubusercontent.com/dongwa/vercel-quasar/dev/imgs/server.js.example.png)
+
 
 ## 2. Configure `vercel-quasar` as builder in `vercel.json`
-### Add a `vercel.json` file in your root path
+### Add a `vercel.json` file to your project root path
 ```json
 {
   "version": 2,
@@ -50,4 +54,28 @@ export function listen({ app, port, isReady, ssrHandler }) {
   ]
 }
 
+```
+## 3. Custom build command
+### The default build command is `npx quasar build -m ssr`,if you want to use custom it,add a `build:ssr` or `build` script to your package.json
+
+> Note that the priority of `build:ssr` is higher than that of `build`. If `build:ssr` exists, command `build` will not be executed in deploy.
+- example 
+### 
+```json
+{
+  "name": "quasar-example",
+  "version": "1.0.0",
+  "productName": "quasar-example",
+  "scripts": {
+    "dev": "quasar dev",
+    "dev:ssr": "quasar dev -m ssr",
+    "build:ssr":"node build/index.js && quasar build -m ssr",
+  },
+  "dependencies": {
+
+  },
+  "devDependencies": {
+
+  },
+}
 ```

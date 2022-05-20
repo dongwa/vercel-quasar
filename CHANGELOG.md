@@ -2,6 +2,26 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.1.5](https://github.com/dongwa/vercel-quasar/compare/v0.1.4...v0.1.5) (2022-05-20)
+
+### [0.1.4](https://github.com/dongwa/vercel-quasar/compare/v0.1.3...v0.1.4) (2022-05-20)
+
+
+### Features
+
+* load indexjs.then ([fd9f1c4](https://github.com/dongwa/vercel-quasar/commit/fd9f1c4ed0b2962566a1538c6c91468340a3a557))
+
+### [0.1.3](https://github.com/dongwa/vercel-quasar/compare/v0.1.2...v0.1.3) (2022-05-20)
+
+### [0.1.2](https://github.com/dongwa/vercel-quasar/compare/v0.1.1...v0.1.2) (2022-05-20)
+
+### [0.1.1](https://github.com/dongwa/vercel-quasar/compare/v0.1.0...v0.1.1) (2022-05-20)
+
+
+### Features
+
+* add custom build command feature ([cdc43b5](https://github.com/dongwa/vercel-quasar/commit/cdc43b586226164fd92dcb32aa10e4c66d42728b))
+
 ## 0.1.0 (2022-05-20)
 
 
