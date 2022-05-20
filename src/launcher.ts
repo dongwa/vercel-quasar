@@ -38,21 +38,22 @@ try {
     listener.then((res: any) => {
       listener = res;
     });
-  }
-  const listenerType = typeof listener;
-  const oldListener = listener;
-  console.log('listener:', typeof listener, listener);
-  if (typeof listener !== 'function') {
-    listener = (req: any, res: any) => {
-      res.writeHead(500, { 'Content-Type': 'text/plain' });
-      res.write(`This is vercel-quasar, your Vercel builder. Turns out we couldn't find your server instance. Did you write \`module.exports = app\`?
-
-  typeof: ${listenerType} (expected 'function')
-  String: ${String(oldListener)}
-
-  Read the docs or create an issue: https://github.com/dongwa/vercel-quasar`);
-      res.end();
-    };
+  } else {
+    const listenerType = typeof listener;
+    const oldListener = listener;
+    console.log('listener:', typeof listener, listener);
+    if (typeof listener !== 'function') {
+      listener = (req: any, res: any) => {
+        res.writeHead(500, { 'Content-Type': 'text/plain' });
+        res.write(`This is vercel-quasar, your Vercel builder. Turns out we couldn't find your server instance. Did you write \`module.exports = app\`?
+  
+    typeof: ${listenerType} (expected 'function')
+    String: ${String(oldListener)}
+  
+    Read the docs or create an issue: https://github.com/dongwa/vercel-quasar`);
+        res.end();
+      };
+    }
   }
 } catch (error) {
   console.error('Server is not listening', error);

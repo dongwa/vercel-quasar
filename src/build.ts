@@ -294,7 +294,7 @@ export async function build(opts: BuildOptions): Promise<BuilderOutput> {
       //   headers: { 'Cache-Control': 'max-age=31557600' },
       // })),
       { handle: 'filesystem' },
-      { src: '/(.*)', dest: '/' },
+      { src: '/(.*)', dest: '/index' },
     ],
   };
 }
