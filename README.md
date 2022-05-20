@@ -35,7 +35,7 @@ export function listen({ app, port, isReady, ssrHandler }) {
 }
 ```
 ### 1.3. example 
-![server.js.example.ng]('./imgs/server.js.example.png')
+![server.js.example.ng](https://raw.githubusercontent.com/dongwa/vercel-quasar/dev/imgs/server.js.example.png)
 
 ## 2. Configure `vercel-quasar` as builder in `vercel.json`
 ### Add a `vercel.json` file in your root path
