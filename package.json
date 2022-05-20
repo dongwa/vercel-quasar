@@ -13,7 +13,7 @@
   "scripts": {
     "build": "tsc --build tsconfig.json",
     "prepublishOnly": "npm run release",
-    "release": "npm run build && standard-version",
+    "release": "npm run build",
     "lint": "eslint --ext .js,.ts,.json ./",
     "fix": "eslint --ext .js,.ts,.json ./ --fix",
     "format": "prettier --config ./.prettierrc --write \"./**/*.{ts,js,json}\" ",
