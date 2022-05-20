@@ -1,6 +1,6 @@
 {
   "name": "vercel-quasar",
-  "version": "0.0.22",
+  "version": "0.1.0",
   "description": "",
   "main": "dist/index.js",
   "files": [
@@ -9,6 +9,9 @@
   "exports": {
     ".": "./dist/index.js",
     "./launcher": "./dist/launcher.js"
+  },
+  "repository": {
+    "url": "https://github.com/dongwa/vercel-quasar"
   },
   "scripts": {
     "build": "tsc --build tsconfig.json",
