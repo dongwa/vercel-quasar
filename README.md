@@ -1,7 +1,7 @@
 # vercel-quasar
-### Vercel builder for Quasar with SSR enabled
+Vercel builder for Quasar with SSR enabled
 
-### Help you to deploy Quasar application on [Vercel](https://vercel.com/) in SSR mode
+Help you to deploy [Quasar](https://quasar.dev) application on [Vercel](https://vercel.com) in SSR mode
 
 # usage
 ## 1. change the listen function in your `src-ssr/server.js` file
@@ -58,11 +58,10 @@ export function listen({ app, port, isReady, ssrHandler }) {
 ## 3. Custom build command
 ### The default build command is `npx quasar build -m ssr`,if you want to use custom it,add a `build:ssr` or `build` script to your package.json
 
-> ### Note that the priority of `build:ssr` is higher than that of `build`. If `build:ssr` exists, command `build` will not be executed in deploy.
+> Note that the priority of `build:ssr` is higher than that of `build`. If `build:ssr` exists, command `build` will not be executed in deploy.
 - example 
 ### 
 ```json
-// in your package.json
 {
   "name": "quasar-example",
   "version": "1.0.0",
