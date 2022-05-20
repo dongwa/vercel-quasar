@@ -5,45 +5,25 @@ const { Server } = require('http') as typeof import('http');
 const { Bridge } =
   require('./vercel__bridge.js') as typeof import('@vercel/node-bridge/bridge');
 let listener: any;
-// let quasarConfig;
+let quasarConfig;
 
-// const loaders = [
-//   { name: 'jiti', args: [] },
-//   {
-//     name: 'esm',
-//     args: [
-//       module,
-//       {
-//         cjs: {
-//           dedefault: true,
-//         },
-//       },
-//     ],
-//   },
-// ];
-// for (const { name, args } of loaders) {
-//   try {
-//     const load = require(name)(...args);
-//     const config = load('./quasar.config.js')({
-//       dev: false,
-//       prod: true,
-//     });
-//     quasarConfig = config.default || config;
-//     break;
-//   } catch (err) {
-//     if (name === 'esm') {
-//       throw new Error(
-//         `Could not load Quasar configuration. Make sure all dependencies are listed in package.json dependencies or in serverFiles within builder options:\n ${err}`
-//       );
-//     }
-//   }
-// }
+try {
+  const jiti = require('jiti')(__dirname);
+  const config = jiti('./quasar.config.js', {
+    dev: false,
+    prod: true,
+  });
+  quasarConfig = config.default || config;
+} catch (err: any) {
+  throw new Error(
+    `Could not load Quasar configuration. Make sure all dependencies are listed in package.json dependencies or in serverFiles within builder options:\n ${err}`
+  );
+}
+
 try {
   process.chdir(__dirname);
-
-  if (!process.env.PROT) process.env.PROT = 3010 as any;
-
-  // process.env.PROT = quasarConfig.ssr.prodProd || (3000 as any);
+  // if (!process.env.PROT) process.env.PROT = 3000 as any;
+  process.env.PROT = quasarConfig?.ssr?.prodProd || (3000 as any);
   if (!process.env.NODE_ENV) process.env.NODE_ENV = 'production';
   if (process.env.DEV) {
     console.log('err dev mode,auto change to prod');

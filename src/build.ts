@@ -23,7 +23,6 @@ import {
   runNpmInstall,
   glob,
   FileBlob,
-  createLambda,
   runPackageJsonScript,
 } from '@vercel/build-utils';
 
@@ -240,9 +239,7 @@ export async function build(opts: BuildOptions): Promise<BuilderOutput> {
     [quasarConfigName]: new FileFsRef({
       fsPath: path.resolve(entrypointPath, quasarConfigName),
     }),
-    // ...serverDistFiles,
     ...distFils,
-    ...serverDistFiles,
     ...nodeModules,
   };
 
@@ -263,7 +260,7 @@ export async function build(opts: BuildOptions): Promise<BuilderOutput> {
   }
 
   // lambdaName will be titled index, unless specified in quasar.config.js
-  lambdas[lambdaName] = await createLambda({
+  lambdas[lambdaName] = new Lambda({
     handler: 'vercel__launcher.launcher',
     runtime: nodeVersion.runtime,
     files: launcherFiles,
@@ -285,9 +282,6 @@ export async function build(opts: BuildOptions): Promise<BuilderOutput> {
     output: {
       ...lambdas,
       ...distFils,
-      // ...clientDistFiles,
-      // ...staticFiles,
-      // ...generatedPagesFiles,
     },
     routes: [
       {
