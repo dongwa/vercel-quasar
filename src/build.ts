@@ -41,9 +41,9 @@ export async function build(opts: BuildOptions): Promise<BuilderOutput> {
   startStep('Prepare build');
   validateEntrypoint(entrypoint);
 
-  // Get Nuxt directory
+  // Get quasar directory
   const entrypointDirname = path.dirname(entrypoint);
-  // Get Nuxt path
+  // Get quasar path
   const entrypointPath = path.join(workPath, entrypointDirname);
   // Get folder where we'll store node_modules
   const modulesPath = path.join(entrypointPath, 'node_modules');
@@ -105,12 +105,12 @@ export async function build(opts: BuildOptions): Promise<BuilderOutput> {
 
   // ----------------- Pre build -----------------
 
-  // Read nuxt.config.js
+  // Read quasar.config.js
   const quasarConfigName = 'quasar.config.js';
   const quasarConfigFile = getQuasarConfig(entrypointPath);
   consola.log('load quasar config', quasarConfigFile);
 
-  // Read options from nuxt.config.js otherwise set sensible defaults
+  // Read options from quasar.config.js otherwise set sensible defaults
   // const staticDir =
   //   quasarConfigFile.dir && quasarConfigFile.dir.static
   //     ? quasarConfigFile.dir.static
@@ -262,7 +262,7 @@ export async function build(opts: BuildOptions): Promise<BuilderOutput> {
     Object.assign(launcherFiles, files);
   }
 
-  // lambdaName will be titled index, unless specified in nuxt.config.js
+  // lambdaName will be titled index, unless specified in quasar.config.js
   lambdas[lambdaName] = await createLambda({
     handler: 'vercel__launcher.launcher',
     runtime: nodeVersion.runtime,
