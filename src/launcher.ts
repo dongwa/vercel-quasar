@@ -23,7 +23,7 @@ try {
 try {
   process.chdir(__dirname);
   // if (!process.env.PROT) process.env.PROT = 3000 as any;
-  process.env.PROT = quasarConfig?.ssr?.prodProd || (3000 as any);
+  process.env.PROT = quasarConfig?.ssr?.prodProt || (3000 as any);
   if (!process.env.NODE_ENV) process.env.NODE_ENV = 'production';
   if (process.env.DEV) {
     console.log('err dev mode,auto change to prod');

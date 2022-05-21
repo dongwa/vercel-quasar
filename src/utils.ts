@@ -186,7 +186,7 @@ export interface QuasarConfiguration {
   ssr: {
     pwa?: boolean;
     maxAge?: number;
-    prodProd?: number;
+    prodProt?: number;
     middlewares?: string[];
     ssrPwaHtmlFilename?: string;
     manualStoreSerialization?: boolean;
@@ -204,7 +204,7 @@ const defaultQuasarConfig: QuasarConfiguration = {
   },
   ssr: {
     pwa: false,
-    prodProd: 3000,
+    prodProt: 3000,
     ssrPwaHtmlFilename: 'offline.html',
   },
 };
