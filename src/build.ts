@@ -9,8 +9,8 @@ import {
   prepareNodeModules,
   getQuasarConfig,
   exec,
-  globAndPrefix,
   endStep,
+  globAndPrefix,
 } from './utils';
 import {
   BuildOptions,
@@ -24,6 +24,7 @@ import {
   glob,
   FileBlob,
   runPackageJsonScript,
+  createLambda,
 } from '@vercel/build-utils';
 
 import type { Route } from '@vercel/routing-utils';
@@ -163,7 +164,7 @@ export async function build(opts: BuildOptions): Promise<BuilderOutput> {
   const distYarnCachePath = path.join(distCachePath, 'yarn');
   await fs.mkdirp(distYarnCachePath);
 
-  // Use node_modules_prod
+  // Use node_modules_prod cache
   await prepareNodeModules(distDir, 'node_modules_prod');
 
   await runNpmInstall(
@@ -196,14 +197,14 @@ export async function build(opts: BuildOptions): Promise<BuilderOutput> {
   // );
 
   // Client dist files
-  // const clientDistDir = path.join(distDir, 'client');
+  const clientDistDir = path.join(distDir, 'client');
   // const clientDistFiles = await globAndPrefix('**', clientDistDir, publicPath);
-  // const clientDistFiles = await glob('**', clientDistDir);
+  const clientDistFiles = await glob('**', clientDistDir);
 
   // Server dist files
   const serverDistDir = path.join(distDir, 'server');
   const serverDistFiles = await glob('**', serverDistDir);
-
+  const indexjsFile = await glob('*', distDir);
   const distFils = await glob('**', distDir);
 
   // const serverDistFiles = await globAndPrefix(
@@ -221,7 +222,6 @@ export async function build(opts: BuildOptions): Promise<BuilderOutput> {
   // node_modules_prod
   const nodeModulesDir = path.join(distDir, 'node_modules_prod');
   const nodeModules = await globAndPrefix('**', nodeModulesDir, 'node_modules');
-
   // Lambdas
   const lambdas: Record<string, Lambda> = {};
 
@@ -239,7 +239,7 @@ export async function build(opts: BuildOptions): Promise<BuilderOutput> {
     [quasarConfigName]: new FileFsRef({
       fsPath: path.resolve(entrypointPath, quasarConfigName),
     }),
-    ...distFils,
+    ...indexjsFile,
     ...serverDistFiles,
     ...nodeModules,
   };
@@ -261,7 +261,7 @@ export async function build(opts: BuildOptions): Promise<BuilderOutput> {
   }
 
   // lambdaName will be titled index, unless specified in quasar.config.js
-  lambdas[lambdaName] = new Lambda({
+  lambdas[lambdaName] = await createLambda({
     handler: 'vercel__launcher.launcher',
     runtime: nodeVersion.runtime,
     files: launcherFiles,
