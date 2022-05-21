@@ -219,8 +219,8 @@ export async function build(opts: BuildOptions): Promise<BuilderOutput> {
   //   : {};
 
   // node_modules_prod
-  const nodeModulesDir = path.join(distDir, 'node_modules_prod');
-  const nodeModules = await globAndPrefix('**', nodeModulesDir, 'node_modules');
+  const nodeModulesDir = path.join(distDir, 'node_modules');
+  const nodeModules = await glob('**', nodeModulesDir);
 
   // Lambdas
   const lambdas: Record<string, Lambda> = {};
@@ -283,6 +283,7 @@ export async function build(opts: BuildOptions): Promise<BuilderOutput> {
     output: {
       ...lambdas,
       ...distFils,
+      ...nodeModules,
     },
     routes: [
       {
