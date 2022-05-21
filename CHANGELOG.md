@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.1.6](https://github.com/dongwa/vercel-quasar/compare/v0.1.1...v0.1.6) (2022-05-21)
+
+
+### Features
+
+* change prod node_modules path ([b7f6823](https://github.com/dongwa/vercel-quasar/commit/b7f68230e4c991b264a44f3594a0580ed6d6a5fe))
+* load indexjs.then ([fd9f1c4](https://github.com/dongwa/vercel-quasar/commit/fd9f1c4ed0b2962566a1538c6c91468340a3a557))
+
+
+### Bug Fixes
+
+* fix the root path ([e5e4f36](https://github.com/dongwa/vercel-quasar/commit/e5e4f36a0ed7433f50ac3d1b29246a80a76d5bc5))
+* prod -> prot ([6b552bb](https://github.com/dongwa/vercel-quasar/commit/6b552bbb71f3ab0e1f659fc9e2eea1eb2ed4857e))
+
 ### [0.1.5](https://github.com/dongwa/vercel-quasar/compare/v0.1.4...v0.1.5) (2022-05-20)
 
 ### [0.1.4](https://github.com/dongwa/vercel-quasar/compare/v0.1.3...v0.1.4) (2022-05-20)
