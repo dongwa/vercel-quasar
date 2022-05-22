@@ -10,6 +10,7 @@ import {
   getQuasarConfig,
   exec,
   endStep,
+  globAndPrefix,
 } from './utils';
 import {
   BuildOptions,
@@ -203,7 +204,7 @@ export async function build(opts: BuildOptions): Promise<BuilderOutput> {
   // Server dist files
   const serverDistDir = path.join(distDir, 'server');
   const serverDistFiles = await glob('**', serverDistDir);
-
+  const indexjsFile = await glob('*', distDir);
   const distFils = await glob('**', distDir);
 
   // const serverDistFiles = await globAndPrefix(
@@ -219,9 +220,8 @@ export async function build(opts: BuildOptions): Promise<BuilderOutput> {
   //   : {};
 
   // node_modules_prod
-  const nodeModulesDir = path.join(distDir, 'node_modules');
-  const nodeModules = await glob('**', nodeModulesDir);
-
+  const nodeModulesDir = path.join(distDir, 'node_modules_prod');
+  const nodeModules = await globAndPrefix('**', nodeModulesDir, 'node_modules');
   // Lambdas
   const lambdas: Record<string, Lambda> = {};
 
@@ -239,7 +239,8 @@ export async function build(opts: BuildOptions): Promise<BuilderOutput> {
     [quasarConfigName]: new FileFsRef({
       fsPath: path.resolve(entrypointPath, quasarConfigName),
     }),
-    ...distFils,
+    ...indexjsFile,
+    ...serverDistFiles,
     ...nodeModules,
   };
 
@@ -260,7 +261,7 @@ export async function build(opts: BuildOptions): Promise<BuilderOutput> {
   }
 
   // lambdaName will be titled index, unless specified in quasar.config.js
-  lambdas[lambdaName] = await createLambda({
+  lambdas[lambdaName] = new Lambda({
     handler: 'vercel__launcher.launcher',
     runtime: nodeVersion.runtime,
     files: launcherFiles,
