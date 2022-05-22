@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.1.7](https://github.com/dongwa/vercel-quasar/compare/v0.1.6...v0.1.7) (2022-05-22)
+
+
+### Features
+
+* set default maxLambdaSize to 1000mb ([419b8c6](https://github.com/dongwa/vercel-quasar/commit/419b8c616c5436492a8402f1228c0ea7025438fc))
+
 ### [0.1.6](https://github.com/dongwa/vercel-quasar/compare/v0.1.1...v0.1.6) (2022-05-21)
 
 
