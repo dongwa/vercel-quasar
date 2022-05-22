@@ -23,6 +23,7 @@ import {
   glob,
   FileBlob,
   runPackageJsonScript,
+  createLambda,
 } from '@vercel/build-utils';
 
 import type { Route } from '@vercel/routing-utils';
@@ -163,7 +164,7 @@ export async function build(opts: BuildOptions): Promise<BuilderOutput> {
   await fs.mkdirp(distYarnCachePath);
 
   // Use node_modules_prod cache
-  // await prepareNodeModules(distDir, 'node_modules_prod');
+  await prepareNodeModules(distDir, 'node_modules_prod');
 
   await runNpmInstall(
     distDir,
@@ -195,9 +196,9 @@ export async function build(opts: BuildOptions): Promise<BuilderOutput> {
   // );
 
   // Client dist files
-  // const clientDistDir = path.join(distDir, 'client');
+  const clientDistDir = path.join(distDir, 'client');
   // const clientDistFiles = await globAndPrefix('**', clientDistDir, publicPath);
-  // const clientDistFiles = await glob('**', clientDistDir);
+  const clientDistFiles = await glob('**', clientDistDir);
 
   // Server dist files
   const serverDistDir = path.join(distDir, 'server');
@@ -259,7 +260,7 @@ export async function build(opts: BuildOptions): Promise<BuilderOutput> {
   }
 
   // lambdaName will be titled index, unless specified in quasar.config.js
-  lambdas[lambdaName] = new Lambda({
+  lambdas[lambdaName] = await createLambda({
     handler: 'vercel__launcher.launcher',
     runtime: nodeVersion.runtime,
     files: launcherFiles,
