@@ -9,7 +9,6 @@ import {
   prepareNodeModules,
   getQuasarConfig,
   exec,
-  globAndPrefix,
   endStep,
 } from './utils';
 import {
@@ -163,8 +162,8 @@ export async function build(opts: BuildOptions): Promise<BuilderOutput> {
   const distYarnCachePath = path.join(distCachePath, 'yarn');
   await fs.mkdirp(distYarnCachePath);
 
-  // Use node_modules_prod
-  await prepareNodeModules(distDir, 'node_modules_prod');
+  // Use node_modules_prod cache
+  // await prepareNodeModules(distDir, 'node_modules_prod');
 
   await runNpmInstall(
     distDir,
@@ -240,7 +239,6 @@ export async function build(opts: BuildOptions): Promise<BuilderOutput> {
       fsPath: path.resolve(entrypointPath, quasarConfigName),
     }),
     ...distFils,
-    ...serverDistFiles,
     ...nodeModules,
   };
 
@@ -283,12 +281,21 @@ export async function build(opts: BuildOptions): Promise<BuilderOutput> {
     output: {
       ...lambdas,
       ...distFils,
-      ...nodeModules,
     },
     routes: [
       {
         src: `/${publicPath}.+`,
         headers: { 'Cache-Control': 'max-age=31557600' },
+      },
+      {
+        src: '/index.js',
+        headers: { 'cache-control': 'public,max-age=0,must-revalidate' },
+        continue: true,
+      },
+      {
+        src: '/server/server-entry.js',
+        headers: { 'cache-control': 'public,max-age=0,must-revalidate' },
+        continue: true,
       },
       // ...Object.keys(staticFiles).map((file) => ({
       //   src: `/${file}`,

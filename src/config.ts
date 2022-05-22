@@ -1,7 +1,7 @@
 import type { Config } from '@vercel/build-utils';
 
 const config: Config = {
-  maxLambdaSize: '50mb',
+  maxLambdaSize: '1000mb',
 };
 
 export default config;
