@@ -261,7 +261,7 @@ export async function build(opts: BuildOptions): Promise<BuilderOutput> {
   }
 
   // lambdaName will be titled index, unless specified in quasar.config.js
-  lambdas[lambdaName] = new Lambda({
+  lambdas[lambdaName] = await createLambda({
     handler: 'vercel__launcher.launcher',
     runtime: nodeVersion.runtime,
     files: launcherFiles,
@@ -288,16 +288,6 @@ export async function build(opts: BuildOptions): Promise<BuilderOutput> {
       {
         src: `/${publicPath}.+`,
         headers: { 'Cache-Control': 'max-age=31557600' },
-      },
-      {
-        src: '/index.js',
-        headers: { 'cache-control': 'public,max-age=0,must-revalidate' },
-        continue: true,
-      },
-      {
-        src: '/server/server-entry.js',
-        headers: { 'cache-control': 'public,max-age=0,must-revalidate' },
-        continue: true,
       },
       // ...Object.keys(staticFiles).map((file) => ({
       //   src: `/${file}`,
