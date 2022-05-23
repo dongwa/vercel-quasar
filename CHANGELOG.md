@@ -2,77 +2,23 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
-### [0.1.13](https://github.com/dongwa/vercel-quasar/compare/v0.1.12...v0.1.13) (2022-05-23)
-
-### [0.1.12](https://github.com/dongwa/vercel-quasar/compare/v0.1.11...v0.1.12) (2022-05-23)
-
-### [0.1.11](https://github.com/dongwa/vercel-quasar/compare/v0.1.10...v0.1.11) (2022-05-23)
-
-### [0.1.10](https://github.com/dongwa/vercel-quasar/compare/v0.1.5...v0.1.10) (2022-05-23)
+## [0.2.0](https://github.com/dongwa/vercel-quasar/compare/v0.1.13...v0.2.0) (2022-05-23)
 
 
 ### Features
 
-* change prod node_modules path ([b7f6823](https://github.com/dongwa/vercel-quasar/commit/b7f68230e4c991b264a44f3594a0580ed6d6a5fe))
-* set default maxLambdaSize to 1000mb ([419b8c6](https://github.com/dongwa/vercel-quasar/commit/419b8c616c5436492a8402f1228c0ea7025438fc))
-
+* Added custom build command support,detail in readme.md
+* Added custom build dist directory support to synchronize with your quasar.config.js -> build -> distDir
 
 ### Bug Fixes
-
-* fix the root path ([e5e4f36](https://github.com/dongwa/vercel-quasar/commit/e5e4f36a0ed7433f50ac3d1b29246a80a76d5bc5))
-* prod -> prot ([6b552bb](https://github.com/dongwa/vercel-quasar/commit/6b552bbb71f3ab0e1f659fc9e2eea1eb2ed4857e))
-
-### [0.1.9](https://github.com/dongwa/vercel-quasar/compare/v0.1.8...v0.1.9) (2022-05-22)
-
-### [0.1.8](https://github.com/dongwa/vercel-quasar/compare/v0.1.7...v0.1.8) (2022-05-22)
-
-### [0.1.7](https://github.com/dongwa/vercel-quasar/compare/v0.1.6...v0.1.7) (2022-05-22)
-
-
-### Features
-
-* set default maxLambdaSize to 1000mb ([419b8c6](https://github.com/dongwa/vercel-quasar/commit/419b8c616c5436492a8402f1228c0ea7025438fc))
-
-### [0.1.6](https://github.com/dongwa/vercel-quasar/compare/v0.1.1...v0.1.6) (2022-05-21)
-
-
-### Features
-
-* change prod node_modules path ([b7f6823](https://github.com/dongwa/vercel-quasar/commit/b7f68230e4c991b264a44f3594a0580ed6d6a5fe))
-* load indexjs.then ([fd9f1c4](https://github.com/dongwa/vercel-quasar/commit/fd9f1c4ed0b2962566a1538c6c91468340a3a557))
-
-
-### Bug Fixes
-
-* fix the root path ([e5e4f36](https://github.com/dongwa/vercel-quasar/commit/e5e4f36a0ed7433f50ac3d1b29246a80a76d5bc5))
-* prod -> prot ([6b552bb](https://github.com/dongwa/vercel-quasar/commit/6b552bbb71f3ab0e1f659fc9e2eea1eb2ed4857e))
-
-### [0.1.5](https://github.com/dongwa/vercel-quasar/compare/v0.1.4...v0.1.5) (2022-05-20)
-
-### [0.1.4](https://github.com/dongwa/vercel-quasar/compare/v0.1.3...v0.1.4) (2022-05-20)
-
-
-### Features
-
-* load indexjs.then ([fd9f1c4](https://github.com/dongwa/vercel-quasar/commit/fd9f1c4ed0b2962566a1538c6c91468340a3a557))
-
-### [0.1.3](https://github.com/dongwa/vercel-quasar/compare/v0.1.2...v0.1.3) (2022-05-20)
-
-### [0.1.2](https://github.com/dongwa/vercel-quasar/compare/v0.1.1...v0.1.2) (2022-05-20)
-
-### [0.1.1](https://github.com/dongwa/vercel-quasar/compare/v0.1.0...v0.1.1) (2022-05-20)
-
-
-### Features
-
-* add custom build command feature ([cdc43b5](https://github.com/dongwa/vercel-quasar/commit/cdc43b586226164fd92dcb32aa10e4c66d42728b))
+* Fix the deployment failure
 
 ## 0.1.0 (2022-05-20)
 
 
 ### Features
 
-* add build comand ([cfaef59](https://github.com/dongwa/vercel-quasar/commit/cfaef592d15e49a425d2e6acf8fffa77880bfa86))
+* add build command ([cfaef59](https://github.com/dongwa/vercel-quasar/commit/cfaef592d15e49a425d2e6acf8fffa77880bfa86))
 * add build script before publlish ([4487b0a](https://github.com/dongwa/vercel-quasar/commit/4487b0a4c1e55b94fab2d655238ddb3237d334eb))
 * initial commit ([c2ea7dd](https://github.com/dongwa/vercel-quasar/commit/c2ea7dd1bb98772913e6a195ce5ec540141b8e1e))
 
