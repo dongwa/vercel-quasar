@@ -239,8 +239,7 @@ export async function build(opts: BuildOptions): Promise<BuilderOutput> {
     [quasarConfigName]: new FileFsRef({
       fsPath: path.resolve(entrypointPath, quasarConfigName),
     }),
-    ...indexjsFile,
-    ...serverDistFiles,
+    ...distFils,
     ...nodeModules,
   };
 
