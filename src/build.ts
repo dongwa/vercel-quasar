@@ -26,7 +26,7 @@ import {
   runPackageJsonScript,
   createLambda,
 } from '@vercel/build-utils';
-import { version } from '../package.json';
+
 import type { Route } from '@vercel/routing-utils';
 
 interface BuilderOutput {
@@ -38,7 +38,7 @@ interface BuilderOutput {
 export async function build(opts: BuildOptions): Promise<BuilderOutput> {
   const { files, entrypoint, workPath, config = {}, meta = {} } = opts;
 
-  consola.log(`use vercel-quasar@${version}`);
+  consola.log(`use vercel-quasar@${require('../package.json').version}`);
   /** prepare build */
   startStep(`Prepare build`);
   validateEntrypoint(entrypoint);
