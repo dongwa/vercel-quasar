@@ -1,6 +1,6 @@
 {
   "name": "vercel-quasar",
-  "version": "0.2.0",
+  "version": "0.2.1-beat.0",
   "description": "",
   "main": "dist/index.js",
   "files": [
@@ -23,7 +23,8 @@
     "test": "jest",
     "ver": "standard-version",
     "vermi": "standard-version -r minor",
-    "verma": "standard-version -r major"
+    "verma": "standard-version -r major",
+    "verp": "standard-version -p beat"
   },
   "author": "dongwa",
   "license": "MIT",
