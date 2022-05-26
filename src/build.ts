@@ -37,8 +37,10 @@ interface BuilderOutput {
 
 export async function build(opts: BuildOptions): Promise<BuilderOutput> {
   const { files, entrypoint, workPath, config = {}, meta = {} } = opts;
+
+  consola.log(`use vercel-quasar@${require('../package.json').version}`);
   /** prepare build */
-  startStep('Prepare build');
+  startStep(`Prepare build`);
   validateEntrypoint(entrypoint);
 
   // Get quasar directory
@@ -67,6 +69,10 @@ export async function build(opts: BuildOptions): Promise<BuilderOutput> {
   // Node version
   const nodeVersion = await getNodeVersion(entrypointPath, undefined, {}, meta);
   const spawnOpts = getSpawnOptions(meta, nodeVersion);
+
+  /** Not use pnpm at now.TODO:support pnpm */
+  const pnpmLockName = 'pnpm-lock.yaml';
+  if (fs.existsSync(pnpmLockName)) fs.unlinkSync(pnpmLockName);
 
   // Detect npm (prefer yarn)
   const isYarn = !fs.existsSync('package-lock.json');

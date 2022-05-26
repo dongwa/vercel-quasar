@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.3.0](https://github.com/dongwa/vercel-quasar/compare/v0.2.1-beat.1...v0.3.0) (2022-05-26)
+
+
+### Bug Fixes
+
+* fix pnpm err,not use pnpm at now ([bb11aac](https://github.com/dongwa/vercel-quasar/commit/bb11aac9b7c43902cd8d2360db9b11e8ad97297e))
+* prod -> prot ([3e3e85e](https://github.com/dongwa/vercel-quasar/commit/3e3e85efae3640a136aad7bd9bc50b7dbce76c25))
+* refactor build dir ([1fe81a1](https://github.com/dongwa/vercel-quasar/commit/1fe81a1cef412abfed8c4ff52ca33c7eea7530d4))
+
+
 ## [0.2.0](https://github.com/dongwa/vercel-quasar/compare/v0.1.13...v0.2.0) (2022-05-23)
 
 
