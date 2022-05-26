@@ -68,6 +68,10 @@ export async function build(opts: BuildOptions): Promise<BuilderOutput> {
   const nodeVersion = await getNodeVersion(entrypointPath, undefined, {}, meta);
   const spawnOpts = getSpawnOptions(meta, nodeVersion);
 
+  /** Not use pnpm at now.TODO:support pnpm */
+  const pnpmLockName = 'pnpm-lock.yaml';
+  if (fs.existsSync(pnpmLockName)) fs.unlinkSync(pnpmLockName);
+
   // Detect npm (prefer yarn)
   const isYarn = !fs.existsSync('package-lock.json');
   consola.log('Using', isYarn ? 'yarn' : 'npm');
