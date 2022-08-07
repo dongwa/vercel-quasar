@@ -161,27 +161,21 @@ export async function build(opts: BuildOptions): Promise<BuilderOutput> {
   startStep('Install dist dependencies');
 
   const distDir = path.join(entrypointPath, quasarConfigFile.build.distDir);
-  // Get folder where we'll store node_modules
-  const distModulesPath = path.join(distDir, 'node_modules');
-  // Cache dir
-  const distCachePath = path.resolve(entrypointPath, '.quasar_dist_cache');
-  await fs.mkdirp(distCachePath);
-
-  const distYarnCachePath = path.join(distCachePath, 'yarn');
-  await fs.mkdirp(distYarnCachePath);
+  /**  copy package.json form dist to entrypointPath */
+  fs.copyFileSync(path.join(distDir, 'package.json'), entrypointDirname);
 
   // Use node_modules_prod cache
   await prepareNodeModules(distDir, 'node_modules_prod');
 
   await runNpmInstall(
-    distDir,
+    entrypointPath,
     [
       '--prefer-offline',
       '--pure-lockfile',
       '--non-interactive',
       '--production=true',
-      `--modules-folder=${distModulesPath}`,
-      `--cache-folder=${distYarnCachePath}`,
+      `--modules-folder=${modulesPath}`,
+      `--cache-folder=${yarnCachePath}`,
     ],
     {
       ...spawnOpts,
@@ -226,7 +220,7 @@ export async function build(opts: BuildOptions): Promise<BuilderOutput> {
   //   : {};
 
   // node_modules_prod
-  const nodeModulesDir = path.join(distDir, 'node_modules_prod');
+  const nodeModulesDir = path.join(entrypointPath, 'node_modules_prod');
   const nodeModules = await globAndPrefix('**', nodeModulesDir, 'node_modules');
   // Lambdas
   const lambdas: Record<string, Lambda> = {};
