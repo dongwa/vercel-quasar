@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.3.1-beat.3](https://github.com/dongwa/vercel-quasar/compare/v0.3.1-beat.2...v0.3.1-beat.3) (2022-08-08)
+
+
+### Bug Fixes
+
+* fix no such file when copying .yarnclean ([b3e88cd](https://github.com/dongwa/vercel-quasar/commit/b3e88cd4ffdb960649aeafb4436b41935313e41d))
+
 ### 0.3.1-beat.2 (2022-08-08)
 
 

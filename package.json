@@ -1,6 +1,6 @@
 {
   "name": "vercel-quasar",
-  "version": "0.3.1-beat.2",
+  "version": "0.3.1-beat.3",
   "description": "",
   "main": "dist/index.js",
   "files": [
