@@ -2,6 +2,23 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### 0.3.1-beat.2 (2022-08-08)
+
+
+### Features
+
+* add build command ([3d6fc90](https://github.com/dongwa/vercel-quasar/commit/3d6fc90b2e5f93dc27925f9ea944b88f62aa7503))
+* add custom build command feature ([a84d333](https://github.com/dongwa/vercel-quasar/commit/a84d3335e9629a41140e6fc06538ff6e9f42160c))
+* initial commit ([c2ea7dd](https://github.com/dongwa/vercel-quasar/commit/c2ea7dd1bb98772913e6a195ce5ec540141b8e1e))
+
+
+### Bug Fixes
+
+* fix copyFileSync error ([355269c](https://github.com/dongwa/vercel-quasar/commit/355269cc871ea3f7f8c58c821df70d9bf6ff99b8))
+* fix no such file or directory ([99470cb](https://github.com/dongwa/vercel-quasar/commit/99470cb68c608c8d9abb05bb292af7914f581610))
+* fix yarn install error ([aa4e20a](https://github.com/dongwa/vercel-quasar/commit/aa4e20acfd06a01f708f513cf226518154a0a01c))
+* prod -> prot ([3e3e85e](https://github.com/dongwa/vercel-quasar/commit/3e3e85efae3640a136aad7bd9bc50b7dbce76c25))
+
 ### 0.3.1-beat.1 (2022-08-08)
 
 
