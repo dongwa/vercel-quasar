@@ -78,8 +78,29 @@ export async function build(opts: BuildOptions): Promise<BuilderOutput> {
   const isYarn = !fs.existsSync('package-lock.json');
   consola.log('Using', isYarn ? 'yarn' : 'npm');
 
+  // Write .npmrc
+  if (process.env.NPM_RC) {
+    consola.log('Found NPM_RC in environment; creating .npmrc');
+    await fs.writeFile('.npmrc', process.env.NPM_RC);
+  } else if (process.env.NPM_AUTH_TOKEN || process.env.NPM_TOKEN) {
+    consola.log(
+      'Found NPM_AUTH_TOKEN or NPM_TOKEN in environment; creating .npmrc'
+    );
+    await fs.writeFile(
+      '.npmrc',
+      `//registry.npmjs.org/:_authToken=${
+        process.env.NPM_AUTH_TOKEN || process.env.NPM_TOKEN
+      }`
+    );
+  }
+
+  // Write .yarnclean
+  if (isYarn && !fs.existsSync('../.yarnclean')) {
+    await fs.copyFile(path.join(__dirname, '../.yarnclean'), '.yarnclean');
+  }
+
   // Cache dir
-  const cachePath = path.resolve(entrypointPath, '.quasar_cache');
+  const cachePath = path.resolve(entrypointPath, '.vercel_cache');
   await fs.mkdirp(cachePath);
 
   const yarnCachePath = path.join(cachePath, 'yarn');
@@ -162,13 +183,22 @@ export async function build(opts: BuildOptions): Promise<BuilderOutput> {
 
   const distDir = path.join(entrypointPath, quasarConfigFile.build.distDir);
   /**  copy package.json form dist to entrypointPath */
-  fs.copyFileSync(
+  await fs.copyFile(
     path.join(distDir, 'package.json'),
     path.join(entrypointPath, 'package.json')
   );
 
+  // Read package.json
+  let pkgOfProd: MutablePackageJson;
+  try {
+    pkgOfProd = await readJSON('package.json');
+    consola.log('pkgOfProd:', pkgOfProd);
+  } catch (e) {
+    throw new Error(`Can not read package.json from ${entrypointPath}`);
+  }
+
   // Use node_modules_prod cache
-  await prepareNodeModules(distDir, 'node_modules_prod');
+  await prepareNodeModules(entrypointPath, 'node_modules_prod');
 
   await runNpmInstall(
     entrypointPath,
