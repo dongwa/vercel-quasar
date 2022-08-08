@@ -162,7 +162,10 @@ export async function build(opts: BuildOptions): Promise<BuilderOutput> {
 
   const distDir = path.join(entrypointPath, quasarConfigFile.build.distDir);
   /**  copy package.json form dist to entrypointPath */
-  fs.copyFileSync(path.join(distDir, 'package.json'), entrypointDirname);
+  fs.copyFileSync(
+    path.join(distDir, 'package.json'),
+    path.join(entrypointPath, 'package.json')
+  );
 
   // Use node_modules_prod cache
   await prepareNodeModules(distDir, 'node_modules_prod');
