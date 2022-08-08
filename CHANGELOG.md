@@ -2,6 +2,8 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.3.1](https://github.com/dongwa/vercel-quasar/compare/v0.3.1-beat.4...v0.3.1) (2022-08-08)
+
 ### [0.3.1-beat.4](https://github.com/dongwa/vercel-quasar/compare/v0.3.1-beat.3...v0.3.1-beat.4) (2022-08-08)
 
 ### [0.3.1-beat.3](https://github.com/dongwa/vercel-quasar/compare/v0.3.1-beat.2...v0.3.1-beat.3) (2022-08-08)
