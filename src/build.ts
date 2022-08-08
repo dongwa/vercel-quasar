@@ -96,7 +96,7 @@ export async function build(opts: BuildOptions): Promise<BuilderOutput> {
 
   // Write .yarnclean
   if (isYarn && !fs.existsSync('../.yarnclean')) {
-    await fs.copyFile(path.join(__dirname, '../.yarnclean'), '.yarnclean');
+    await fs.copyFile(path.join(entrypointPath, '../.yarnclean'), '.yarnclean');
   }
 
   // Cache dir
