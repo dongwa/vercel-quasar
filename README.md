@@ -8,7 +8,8 @@ Help you to deploy [Quasar](https://quasar.dev) application on [Vercel](https://
 - remove all async and await. It is important,making sure the listen function will not return the content of the asynchronous
 - return { handler: ssrHandler }
 - example 
-![server.js.example.ng](https://raw.githubusercontent.com/dongwa/vercel-quasar/dev/imgs/server.js.example.png)
+![server.js.example.ng](https://raw.githubusercontent.com/dongwa/vercel-quasar/master/imgs/server.js.example.png)
+
 ``` js
 /**
  * You need to make the server listen to the indicated port
