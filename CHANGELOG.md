@@ -2,6 +2,21 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.4.6](https://github.com/dongwa/vercel-quasar/compare/v0.3.1...v0.4.6) (2023-08-10)
+
+
+### Features
+
+* adding  pnpm support ([b8ecfe4](https://github.com/dongwa/vercel-quasar/commit/b8ecfe48d41cbb47f533dbdc97683764a8360a68))
+* support for esm of quasar.config.js ([4954d05](https://github.com/dongwa/vercel-quasar/commit/4954d05d3ef9937de4fd9dd088aa2ae527ff4c05))
+
+
+### Bug Fixes
+
+* 缩减 lambdas 内容，fix [#4](https://github.com/dongwa/vercel-quasar/issues/4) ([59d6a9f](https://github.com/dongwa/vercel-quasar/commit/59d6a9fc1987affa97b3449b68613444194fd42c))
+* fix  pnpm-lock.yaml is not up to date ([4c34c25](https://github.com/dongwa/vercel-quasar/commit/4c34c25d909b5c2098db62d0b70bb2303f9a5fda))
+* fix pnpm error ([2e9ccd6](https://github.com/dongwa/vercel-quasar/commit/2e9ccd676eba3f12b7dba870f9b521c7bc2b4f05))
+
 ### [0.4.5](https://github.com/dongwa/vercel-quasar/compare/v0.3.1...v0.4.5) (2023-08-10)
 
 
