@@ -110,6 +110,21 @@ export async function build(opts: BuildOptions): Promise<BuilderOutput> {
   const nodeModulesCachePath = path.join(cachePath, usingPacker);
   await fs.mkdirp(nodeModulesCachePath);
 
+  function getInstallOptions(pnpm: boolean, production: boolean) {
+    const noPnpmOptions = [
+      '--non-interactive',
+      `--modules-folder=${modulesPath}`,
+      `--cache-folder=${nodeModulesCachePath}`,
+    ];
+    const options = [
+      '--prefer-offline',
+      '--frozen-lockfile',
+      `--production=${production}`,
+    ];
+    if (!pnpm) return [...options, ...noPnpmOptions];
+    return options;
+  }
+
   // TODO: Detect vercel analytics
   // if (process.env.VERCEL_ANALYTICS_ID) {
   // }
@@ -120,16 +135,12 @@ export async function build(opts: BuildOptions): Promise<BuilderOutput> {
   // Prepare node_modules
   await prepareNodeModules(entrypointPath, 'node_modules_dev');
   // Install all dependencies
+
+  //'non-interactive', 'modules-folder', 'cache-folder'
+
   await runNpmInstall(
     entrypointPath,
-    [
-      '--prefer-offline',
-      '--frozen-lockfile',
-      '--non-interactive',
-      '--production=false',
-      `--modules-folder=${modulesPath}`,
-      `--cache-folder=${nodeModulesCachePath}`,
-    ],
+    getInstallOptions(isPnpm, false),
     { ...spawnOpts, env: { ...spawnOpts.env, NODE_ENV: 'development' } },
     meta
   );
@@ -206,14 +217,7 @@ export async function build(opts: BuildOptions): Promise<BuilderOutput> {
 
   await runNpmInstall(
     entrypointPath,
-    [
-      '--prefer-offline',
-      '--pure-lockfile',
-      '--non-interactive',
-      '--production=true',
-      `--modules-folder=${modulesPath}`,
-      `--cache-folder=${nodeModulesCachePath}`,
-    ],
+    getInstallOptions(isPnpm, true),
     {
       ...spawnOpts,
       env: {
