@@ -68,15 +68,19 @@ export async function build(opts: BuildOptions): Promise<BuilderOutput> {
 
   // Node version
   const nodeVersion = await getNodeVersion(entrypointPath, undefined, {}, meta);
+
+  consola.log('nodeVersion :', nodeVersion);
+
   const spawnOpts = getSpawnOptions(meta, nodeVersion);
 
-  /** Not use pnpm at now.TODO:support pnpm */
   const pnpmLockName = 'pnpm-lock.yaml';
-  if (fs.existsSync(pnpmLockName)) fs.unlinkSync(pnpmLockName);
+  const isPnpm = fs.existsSync(pnpmLockName);
 
   // Detect npm (prefer yarn)
   const isYarn = !fs.existsSync('package-lock.json');
-  consola.log('Using', isYarn ? 'yarn' : 'npm');
+
+  const usingPacker = isPnpm ? 'pnpm' : isYarn ? 'yarn' : 'npm';
+  consola.log('Using', usingPacker);
 
   // Write .npmrc
   if (process.env.NPM_RC) {
@@ -103,8 +107,8 @@ export async function build(opts: BuildOptions): Promise<BuilderOutput> {
   const cachePath = path.resolve(entrypointPath, '.vercel_cache');
   await fs.mkdirp(cachePath);
 
-  const yarnCachePath = path.join(cachePath, 'yarn');
-  await fs.mkdirp(yarnCachePath);
+  const nodeModulesCachePath = path.join(cachePath, usingPacker);
+  await fs.mkdirp(nodeModulesCachePath);
 
   // TODO: Detect vercel analytics
   // if (process.env.VERCEL_ANALYTICS_ID) {
@@ -124,7 +128,7 @@ export async function build(opts: BuildOptions): Promise<BuilderOutput> {
       '--non-interactive',
       '--production=false',
       `--modules-folder=${modulesPath}`,
-      `--cache-folder=${yarnCachePath}`,
+      `--cache-folder=${nodeModulesCachePath}`,
     ],
     { ...spawnOpts, env: { ...spawnOpts.env, NODE_ENV: 'development' } },
     meta
@@ -208,7 +212,7 @@ export async function build(opts: BuildOptions): Promise<BuilderOutput> {
       '--non-interactive',
       '--production=true',
       `--modules-folder=${modulesPath}`,
-      `--cache-folder=${yarnCachePath}`,
+      `--cache-folder=${nodeModulesCachePath}`,
     ],
     {
       ...spawnOpts,
