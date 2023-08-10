@@ -244,14 +244,13 @@ export async function build(opts: BuildOptions): Promise<BuilderOutput> {
 
   // Client dist files
   const clientDistDir = path.join(distDir, 'client');
-  const clientDistFiles = await glob('**', clientDistDir);
+  const clientDistFiles = await globAndPrefix('**', clientDistDir, 'client');
 
   // Server dist files
   const serverDistDir = path.join(distDir, 'server');
 
-  const serverDistFiles = await glob('**', serverDistDir);
-  console.log('serverDistFiles', serverDistFiles);
-  const distFils = await glob('**', distDir);
+  const serverDistFiles = await globAndPrefix('**', serverDistDir, 'server');
+  const distFiles = await glob('**', distDir);
 
   // const serverDistFiles = await globAndPrefix(
   //   '**',
