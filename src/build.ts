@@ -121,7 +121,9 @@ export async function build(opts: BuildOptions): Promise<BuilderOutput> {
       '--frozen-lockfile',
       `--production=${production}`,
     ];
+    const pnpmOtions = ['--no-frozen-lockfile'];
     if (!pnpm) return [...options, ...noPnpmOptions];
+    else if (production) return [...options, ...pnpmOtions];
     return options;
   }
 
