@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.4.1](https://github.com/dongwa/vercel-quasar/compare/v0.3.1...v0.4.1) (2023-08-10)
+
+
+### Features
+
+* adding  pnpm support ([b8ecfe4](https://github.com/dongwa/vercel-quasar/commit/b8ecfe48d41cbb47f533dbdc97683764a8360a68))
+
 ## [0.4.0](https://github.com/dongwa/vercel-quasar/compare/v0.3.1...v0.4.0) (2022-08-08)
 
 ### Features
