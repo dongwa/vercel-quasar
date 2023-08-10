@@ -166,13 +166,7 @@ export async function build(opts: BuildOptions): Promise<BuilderOutput> {
     /^\//,
     ''
   );
-  // if (hasProtocol(publicPath)) {
-  //   publicPath = '_quasar/';
-  // }
-  // const buildDir = quasarConfigFile.build.distDir
-  //   ? path.relative(entrypointPath, quasarConfigFile.build.distDir)
-  //   : 'dist/ssr';
-  // const srcDir = '.';
+
   const lambdaName = 'index';
   const usesServerMiddleware =
     config.internalServer !== undefined
@@ -321,12 +315,18 @@ export async function build(opts: BuildOptions): Promise<BuilderOutput> {
         src: `/${publicPath}.+`,
         headers: { 'Cache-Control': 'max-age=31557600' },
       },
+      {
+        src: '/manifest.json',
+        headers: {
+          'Cache-Control': 'max-age=31557600',
+        },
+      },
       // ...Object.keys(staticFiles).map((file) => ({
       //   src: `/${file}`,
       //   headers: { 'Cache-Control': 'max-age=31557600' },
       // })),
       { handle: 'filesystem' },
-      { src: '/(.*)', dest: '/' },
+      { src: '/(.*)', dest: '/index' },
     ],
   };
 }
