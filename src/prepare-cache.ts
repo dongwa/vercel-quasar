@@ -2,14 +2,21 @@ import { PrepareCacheOptions, glob, Files } from '@vercel/build-utils';
 import consola from 'consola';
 
 import { startStep, endStep } from './utils';
+import { getQuasarConfig } from './utils';
 
-async function prepareCache({ workPath }: PrepareCacheOptions): Promise<Files> {
+async function prepareCache({
+  workPath,
+  entrypoint,
+}: PrepareCacheOptions): Promise<Files> {
   startStep('Collect cache');
+
+  const conf = getQuasarConfig(entrypoint);
+  const distDir = conf.build.distDir;
 
   const dirs =
     process.env.QUASAR_CACHE_DISABLED === '1'
       ? []
-      : ['dist/ssr', '.vercel_cache', 'node_modules_dev', 'node_modules_prod'];
+      : [distDir, '.vercel_cache', 'node_modules_dev', 'node_modules_prod'];
 
   const cache: Files = {};
   for (const dir of dirs) {

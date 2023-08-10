@@ -73,13 +73,15 @@ export async function build(opts: BuildOptions): Promise<BuilderOutput> {
 
   const spawnOpts = getSpawnOptions(meta, nodeVersion);
 
+  /** Not use pnpm at now.TODO:support pnpm */
   const pnpmLockName = 'pnpm-lock.yaml';
   const isPnpm = fs.existsSync(pnpmLockName);
+  if (isPnpm) fs.unlinkSync(pnpmLockName);
 
   // Detect npm (prefer yarn)
   const isYarn = !fs.existsSync('package-lock.json');
 
-  const usingPacker = isPnpm ? 'pnpm' : isYarn ? 'yarn' : 'npm';
+  const usingPacker = isYarn ? 'yarn' : 'npm';
   consola.log('Using', usingPacker);
 
   // Write .npmrc
