@@ -244,14 +244,11 @@ export async function build(opts: BuildOptions): Promise<BuilderOutput> {
 
   // Client dist files
   const clientDistDir = path.join(distDir, 'client');
-  const clientDistFiles = await globAndPrefix('**', clientDistDir, 'client');
+  const clientDistFiles = await globAndPrefix('**', clientDistDir, publicPath);
 
   // Server dist files
   const serverDistDir = path.join(distDir, 'server');
   const serverDistFiles = await globAndPrefix('**', serverDistDir, 'server');
-
-  const distFiles = await glob('**', distDir);
-  console.log('distFiles', distFiles);
 
   // node_modules_prod
   const nodeModulesDir = path.join(entrypointPath, 'node_modules_prod');
@@ -317,7 +314,7 @@ export async function build(opts: BuildOptions): Promise<BuilderOutput> {
   return {
     output: {
       ...lambdas,
-      ...distFiles,
+      ...clientDistFiles,
     },
     routes: [
       {
