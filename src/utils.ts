@@ -214,24 +214,29 @@ export function getQuasarConfig(
   quasarConfigName = './quasar.config.js'
 ): QuasarConfiguration {
   const load = jiti(rootDir);
-  let quasarConfigFile = load(quasarConfigName)({
+
+  let quasarConfigModule = load(quasarConfigName);
+  if (quasarConfigModule.default)
+    quasarConfigModule = quasarConfigModule.default;
+
+  let quasarConfig = quasarConfigModule({
     dev: false,
     prod: true,
   });
-  quasarConfigFile = quasarConfigFile.default || quasarConfigFile;
+
   for (let key in defaultQuasarConfig.build) {
-    if (!quasarConfigFile.build[key])
-      quasarConfigFile.build[key] =
+    if (!quasarConfig.build[key])
+      quasarConfig.build[key] =
         defaultQuasarConfig.build[
           key as keyof typeof defaultQuasarConfig['build']
         ];
   }
   for (let key in defaultQuasarConfig.ssr) {
-    if (!quasarConfigFile.ssr[key])
-      quasarConfigFile.ssr[key] =
+    if (!quasarConfig.ssr[key])
+      quasarConfig.ssr[key] =
         defaultQuasarConfig.ssr[key as keyof typeof defaultQuasarConfig['ssr']];
   }
-  return quasarConfigFile;
+  return quasarConfig;
 }
 
 export function getNuxtConfigName(rootDir: string): string {

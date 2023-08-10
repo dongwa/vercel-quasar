@@ -1,10 +1,10 @@
-import { add, multi } from '../src';
+import { getQuasarConfig } from '../src/utils';
 
-let [a, b] = [Math.random(), Math.random()];
-it('add', () => {
-  expect(add(a, b)).toEqual(a + b);
-});
+it('getQuasarConfig', () => {
+  // const testPro = '/Users/lin/Code/repo/quasar-docs-cn';
+  const testPro = '/Users/lin/Code/test/qua/quasar-vite';
+  const res = getQuasarConfig(testPro);
 
-it('mulit', () => {
-  expect(multi(a, b)).toBe(a * b);
+  console.log('res', res);
+  expect(res).not.toBeNull();
 });
