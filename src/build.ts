@@ -244,14 +244,13 @@ export async function build(opts: BuildOptions): Promise<BuilderOutput> {
 
   // Client dist files
   const clientDistDir = path.join(distDir, 'client');
-  // const clientDistFiles = await globAndPrefix('**', clientDistDir, publicPath);
   const clientDistFiles = await glob('**', clientDistDir);
 
   // Server dist files
   const serverDistDir = path.join(distDir, 'server');
-  const clientDir = path.join(distDir, 'client');
-  const clientFiles = await glob('**', clientDir);
+
   const serverDistFiles = await glob('**', serverDistDir);
+  console.log('serverDistFiles', serverDistFiles);
   const distFils = await glob('**', distDir);
 
   // const serverDistFiles = await globAndPrefix(
@@ -288,6 +287,9 @@ export async function build(opts: BuildOptions): Promise<BuilderOutput> {
     }),
     'index.js': new FileFsRef({
       fsPath: path.join(distDir, 'index.js'),
+    }),
+    'render-template.js': new FileFsRef({
+      fsPath: path.join(distDir, 'render-template.js'),
     }),
     ...serverDistFiles,
     ...nodeModules,
@@ -331,7 +333,7 @@ export async function build(opts: BuildOptions): Promise<BuilderOutput> {
   return {
     output: {
       ...lambdas,
-      ...clientFiles,
+      ...clientDistFiles,
     },
     routes: [
       {

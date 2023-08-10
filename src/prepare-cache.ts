@@ -1,8 +1,8 @@
-import { PrepareCacheOptions, glob, Files } from '@vercel/build-utils';
+import path from 'path';
 import consola from 'consola';
-
-import { startStep, endStep } from './utils';
 import { getQuasarConfig } from './utils';
+import { startStep, endStep } from './utils';
+import { PrepareCacheOptions, glob, Files } from '@vercel/build-utils';
 
 async function prepareCache({
   workPath,
@@ -10,7 +10,7 @@ async function prepareCache({
 }: PrepareCacheOptions): Promise<Files> {
   startStep('Collect cache');
 
-  const conf = getQuasarConfig(entrypoint);
+  const conf = getQuasarConfig(path.dirname(entrypoint));
   const distDir = conf.build.distDir;
 
   const dirs =
