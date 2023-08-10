@@ -248,25 +248,15 @@ export async function build(opts: BuildOptions): Promise<BuilderOutput> {
 
   // Server dist files
   const serverDistDir = path.join(distDir, 'server');
-
   const serverDistFiles = await globAndPrefix('**', serverDistDir, 'server');
+
   const distFiles = await glob('**', distDir);
-
-  // const serverDistFiles = await globAndPrefix(
-  //   '**',
-  //   serverDistDir,
-  //   path.join(distDir, 'server')
-  // );
-
-  // Generated static files
-  // const generatedDir = path.join(entrypointPath, 'dist');
-  // const generatedPagesFiles = config.generateStaticRoutes
-  //   ? await globAndPrefix('**/*.*', generatedDir, './')
-  //   : {};
+  console.log('distFiles', distFiles);
 
   // node_modules_prod
   const nodeModulesDir = path.join(entrypointPath, 'node_modules_prod');
   const nodeModules = await globAndPrefix('**', nodeModulesDir, 'node_modules');
+
   // Lambdas
   const lambdas: Record<string, Lambda> = {};
 
@@ -284,12 +274,6 @@ export async function build(opts: BuildOptions): Promise<BuilderOutput> {
     [quasarConfigName]: new FileFsRef({
       fsPath: path.resolve(entrypointPath, quasarConfigName),
     }),
-    'index.js': new FileFsRef({
-      fsPath: path.join(distDir, 'index.js'),
-    }),
-    'render-template.js': new FileFsRef({
-      fsPath: path.join(distDir, 'render-template.js'),
-    }),
     ...serverDistFiles,
     ...nodeModules,
   };
@@ -303,10 +287,13 @@ export async function build(opts: BuildOptions): Promise<BuilderOutput> {
       : []),
     ...(Array.isArray(config.serverFiles) ? config.serverFiles : []),
     'package.json',
+    'index.js',
+    'quasar.manifest.json',
+    'render-template.js',
   ];
 
   for (const pattern of serverFiles) {
-    const files = await glob(pattern, entrypointPath);
+    const files = await glob(pattern, distDir);
     Object.assign(launcherFiles, files);
   }
 
@@ -325,14 +312,12 @@ export async function build(opts: BuildOptions): Promise<BuilderOutput> {
     memory: config.memory as number | undefined,
   });
 
-  // await download(launcherFiles, rootDir)
-
   endStep();
 
   return {
     output: {
       ...lambdas,
-      ...clientDistFiles,
+      ...distFiles,
     },
     routes: [
       {
