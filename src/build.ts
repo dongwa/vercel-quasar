@@ -75,8 +75,9 @@ export async function build(opts: BuildOptions): Promise<BuilderOutput> {
 
   /** Not use pnpm at now.TODO:support pnpm */
   const pnpmLockName = 'pnpm-lock.yaml';
-  const isPnpm = fs.existsSync(pnpmLockName);
+  let isPnpm = fs.existsSync(pnpmLockName);
   if (isPnpm) fs.unlinkSync(pnpmLockName);
+  isPnpm = false;
 
   // Detect npm (prefer yarn)
   const isYarn = !fs.existsSync('package-lock.json');
@@ -248,8 +249,10 @@ export async function build(opts: BuildOptions): Promise<BuilderOutput> {
 
   // Server dist files
   const serverDistDir = path.join(distDir, 'server');
+  const clientDir = path.join(distDir, 'client');
+  const clientFiles = await glob('**', clientDir);
   const serverDistFiles = await glob('**', serverDistDir);
-  const indexjsFile = await glob('*', distDir);
+  const indexjsFile = await glob('*', path.join(distDir, 'index.js'));
   const distFils = await glob('**', distDir);
 
   // const serverDistFiles = await globAndPrefix(
@@ -284,7 +287,8 @@ export async function build(opts: BuildOptions): Promise<BuilderOutput> {
     [quasarConfigName]: new FileFsRef({
       fsPath: path.resolve(entrypointPath, quasarConfigName),
     }),
-    ...distFils,
+    ...serverDistFiles,
+    ...indexjsFile,
     ...nodeModules,
   };
 
@@ -326,7 +330,7 @@ export async function build(opts: BuildOptions): Promise<BuilderOutput> {
   return {
     output: {
       ...lambdas,
-      ...distFils,
+      ...clientFiles,
     },
     routes: [
       {
