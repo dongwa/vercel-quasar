@@ -252,7 +252,6 @@ export async function build(opts: BuildOptions): Promise<BuilderOutput> {
   const clientDir = path.join(distDir, 'client');
   const clientFiles = await glob('**', clientDir);
   const serverDistFiles = await glob('**', serverDistDir);
-  const indexjsFile = await glob('*', path.join(distDir, 'index.js'));
   const distFils = await glob('**', distDir);
 
   // const serverDistFiles = await globAndPrefix(
@@ -287,8 +286,10 @@ export async function build(opts: BuildOptions): Promise<BuilderOutput> {
     [quasarConfigName]: new FileFsRef({
       fsPath: path.resolve(entrypointPath, quasarConfigName),
     }),
+    'index.js': new FileFsRef({
+      fsPath: path.join(distDir, 'index.js'),
+    }),
     ...serverDistFiles,
-    ...indexjsFile,
     ...nodeModules,
   };
 
