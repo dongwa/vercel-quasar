@@ -12,7 +12,13 @@ async function prepareCache({
 
   let distDir = 'dist/ssr';
   try {
-    const conf = getQuasarConfig(path.dirname(entrypoint));
+    // Get quasar directory
+    const entrypointDirname = path.dirname(entrypoint);
+    // Get quasar path
+    const entrypointPath = path.join(workPath, entrypointDirname);
+    console.log('entrypointPath', entrypointPath);
+    const conf = getQuasarConfig(entrypointPath);
+
     distDir = conf.build.distDir;
   } catch (error) {
     consola.error(error);
