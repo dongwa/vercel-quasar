@@ -2,15 +2,15 @@ import consola from 'consola';
 import { startStep, endStep } from './utils';
 import { PrepareCacheOptions, glob, Files } from '@vercel/build-utils';
 
-import type { QuasarConfiguration } from './utils';
+import type { Context } from '.';
 
-async function prepareCache({
-  workPath,
-  config,
-}: PrepareCacheOptions): Promise<Files> {
+async function prepareCache(
+  { workPath }: PrepareCacheOptions,
+  context: Context
+): Promise<Files> {
   startStep('Collect cache');
 
-  const quasarConfig = config.quasarConfig as QuasarConfiguration;
+  const quasarConfig = context.quasarConfig!;
   console.log('quasarConfig', quasarConfig);
   let distDir = quasarConfig?.build?.distDir || 'dist/ssr';
 

@@ -28,6 +28,7 @@ import {
 } from '@vercel/build-utils';
 
 import type { Route } from '@vercel/routing-utils';
+import type { Context } from '.';
 
 interface BuilderOutput {
   watch?: string[];
@@ -35,7 +36,10 @@ interface BuilderOutput {
   routes: Route[];
 }
 
-export async function build(opts: BuildOptions): Promise<BuilderOutput> {
+export async function build(
+  opts: BuildOptions,
+  context: Context
+): Promise<BuilderOutput> {
   const { files, entrypoint, workPath, config = {}, meta = {} } = opts;
 
   consola.log(`use vercel-quasar@${require('../package.json').version}`);
@@ -156,8 +160,8 @@ export async function build(opts: BuildOptions): Promise<BuilderOutput> {
   const quasarConfigName = 'quasar.config.js';
   const quasarConfig = getQuasarConfig(entrypointPath);
 
-  // cache quasarConfig to vercel config
-  config.quasarConfig = quasarConfig;
+  // cache quasarConfig to global context
+  context.quasarConfig = quasarConfig;
 
   consola.log('load quasar config', quasarConfig);
 
