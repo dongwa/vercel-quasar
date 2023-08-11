@@ -2,6 +2,29 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.5.1](https://github.com/dongwa/vercel-quasar/compare/v0.3.1...v0.5.1) (2023-08-11)
+
+
+### Features
+
+* add quasarConfig cache ([8de21db](https://github.com/dongwa/vercel-quasar/commit/8de21dbf4d9f121ab747b6697d4033557cec740a))
+* adding  pnpm support ([b8ecfe4](https://github.com/dongwa/vercel-quasar/commit/b8ecfe48d41cbb47f533dbdc97683764a8360a68))
+* change quasarConfig cache way ([e40d05f](https://github.com/dongwa/vercel-quasar/commit/e40d05f99e45717add9aa08219f084a99356e476))
+* change quasarConfig cache way ([7f127e3](https://github.com/dongwa/vercel-quasar/commit/7f127e3cf387316ca55aea2170d284a841703d63))
+* support async listener ([b58ec52](https://github.com/dongwa/vercel-quasar/commit/b58ec52f4e95357a1a5ccefa5dae751956976913))
+* support for esm of quasar.config.js ([4954d05](https://github.com/dongwa/vercel-quasar/commit/4954d05d3ef9937de4fd9dd088aa2ae527ff4c05))
+
+
+### Bug Fixes
+
+* add render-template.js  to lambdas ([5f82ac0](https://github.com/dongwa/vercel-quasar/commit/5f82ac0460ce8ef16132d94615348f2fbab956af))
+* change lambdas filename ([edac86e](https://github.com/dongwa/vercel-quasar/commit/edac86e503e0845d98b0bf17396390304d160845))
+* ENOTDIR invalid cwd ([b01a325](https://github.com/dongwa/vercel-quasar/commit/b01a32537a42a27a9d30ccbf856f13edebb4fb0a))
+* entrypointPath error at prepareCache ([69bad87](https://github.com/dongwa/vercel-quasar/commit/69bad87955577f7779e931829c842329e1c23d16))
+* fix  pnpm-lock.yaml is not up to date ([4c34c25](https://github.com/dongwa/vercel-quasar/commit/4c34c25d909b5c2098db62d0b70bb2303f9a5fda))
+* fix pnpm error ([2e9ccd6](https://github.com/dongwa/vercel-quasar/commit/2e9ccd676eba3f12b7dba870f9b521c7bc2b4f05))
+* 缩减 lambdas 内容，fix [#4](https://github.com/dongwa/vercel-quasar/issues/4) ([59d6a9f](https://github.com/dongwa/vercel-quasar/commit/59d6a9fc1987affa97b3449b68613444194fd42c))
+
 ## [0.5.0](https://github.com/dongwa/vercel-quasar/compare/v0.3.1...v0.5.0) (2023-08-11)
 
 ### Features
