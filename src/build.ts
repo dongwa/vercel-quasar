@@ -165,11 +165,6 @@ export async function build(
 
   consola.log('load quasar config', quasarConfig);
 
-  // Read options from quasar.config.js otherwise set sensible defaults
-  // const staticDir =
-  //   quasarConfigFile.dir && quasarConfigFile.dir.static
-  //     ? quasarConfigFile.dir.static
-  //     : 'static';
   let publicPath = (quasarConfig.build.publicPath || '/_quasar/').replace(
     /^\//,
     ''
