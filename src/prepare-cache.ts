@@ -1,28 +1,18 @@
-import path from 'path';
 import consola from 'consola';
-import { getQuasarConfig } from './utils';
 import { startStep, endStep } from './utils';
 import { PrepareCacheOptions, glob, Files } from '@vercel/build-utils';
 
+import type { QuasarConfiguration } from './utils';
+
 async function prepareCache({
   workPath,
-  entrypoint,
+  config,
 }: PrepareCacheOptions): Promise<Files> {
   startStep('Collect cache');
 
-  let distDir = 'dist/ssr';
-  try {
-    // Get quasar directory
-    const entrypointDirname = path.dirname(entrypoint);
-    // Get quasar path
-    const entrypointPath = path.join(workPath, entrypointDirname);
-    console.log('entrypointPath', entrypointPath);
-    const conf = getQuasarConfig(entrypointPath);
-
-    distDir = conf.build.distDir;
-  } catch (error) {
-    consola.error(error);
-  }
+  const quasarConfig = config.quasarConfig as QuasarConfiguration;
+  console.log('quasarConfig', quasarConfig);
+  let distDir = quasarConfig?.build?.distDir || 'dist/ssr';
 
   console.log('distDir', distDir);
 

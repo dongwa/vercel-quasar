@@ -178,15 +178,10 @@ const defaultQuasarConfig: QuasarConfiguration = {
   },
 };
 
-/** cache quasarConfig  */
-let quasarConfigCache: QuasarConfiguration | undefined = undefined;
-
 export function getQuasarConfig(
   rootDir: string,
   quasarConfigName = './quasar.config.js'
 ): QuasarConfiguration {
-  if (quasarConfigCache) return quasarConfigCache;
-
   const load = jiti(rootDir);
 
   let quasarConfigModule = load(quasarConfigName);
@@ -210,7 +205,6 @@ export function getQuasarConfig(
       quasarConfig.ssr[key] =
         defaultQuasarConfig.ssr[key as keyof typeof defaultQuasarConfig['ssr']];
   }
-  quasarConfigCache = quasarConfig;
   return quasarConfig;
 }
 

@@ -155,6 +155,10 @@ export async function build(opts: BuildOptions): Promise<BuilderOutput> {
   // Read quasar.config.js
   const quasarConfigName = 'quasar.config.js';
   const quasarConfig = getQuasarConfig(entrypointPath);
+
+  // cache quasarConfig to vercel config
+  config.quasarConfig = quasarConfig;
+
   consola.log('load quasar config', quasarConfig);
 
   // Read options from quasar.config.js otherwise set sensible defaults
