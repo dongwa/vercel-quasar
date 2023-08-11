@@ -28,7 +28,6 @@ import {
 } from '@vercel/build-utils';
 
 import type { Route } from '@vercel/routing-utils';
-import type { Context } from '.';
 
 interface BuilderOutput {
   watch?: string[];
@@ -36,10 +35,7 @@ interface BuilderOutput {
   routes: Route[];
 }
 
-export async function build(
-  opts: BuildOptions,
-  context: Context
-): Promise<BuilderOutput> {
+export async function build(opts: BuildOptions): Promise<BuilderOutput> {
   const { files, entrypoint, workPath, config = {}, meta = {} } = opts;
 
   consola.log(`use vercel-quasar@${require('../package.json').version}`);
@@ -146,7 +142,6 @@ export async function build(
   // Install all dependencies
 
   //'non-interactive', 'modules-folder', 'cache-folder'
-
   await runNpmInstall(
     entrypointPath,
     getInstallOptions(isPnpm, false),
@@ -159,10 +154,6 @@ export async function build(
   // Read quasar.config.js
   const quasarConfigName = 'quasar.config.js';
   const quasarConfig = getQuasarConfig(entrypointPath);
-
-  // cache quasarConfig to global context
-  context.quasarConfig = quasarConfig;
-
   consola.log('load quasar config', quasarConfig);
 
   let publicPath = (quasarConfig.build.publicPath || '/_quasar/').replace(
@@ -232,12 +223,6 @@ export async function build(
 
   // ----------------- Collect artifacts -----------------
   startStep('Collect artifacts');
-
-  // Static files
-  // const staticFiles = await glob(
-  //   '**',
-  //   path.join(entrypointPath, srcDir, staticDir)
-  // );
 
   // Client dist files
   const clientDistDir = path.join(distDir, 'client');
@@ -324,10 +309,6 @@ export async function build(
           'Cache-Control': 'max-age=31557600',
         },
       },
-      // ...Object.keys(staticFiles).map((file) => ({
-      //   src: `/${file}`,
-      //   headers: { 'Cache-Control': 'max-age=31557600' },
-      // })),
       { handle: 'filesystem' },
       { src: '/(.*)', dest: '/index' },
     ],
