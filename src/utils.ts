@@ -7,20 +7,7 @@ import jiti from 'jiti';
 import execa, { ExecaReturnValue } from 'execa';
 import fs from 'fs-extra';
 
-// import type { NuxtConfig as NuxtConfiguration } from '@nuxt/types';
 import type { IOptions } from 'glob';
-
-// const fs = require('fs-extra');
-
-// const bridge = require('@vercel/node-bridge');
-
-// exports.getLauncherFiles = function getLauncherFiles() {
-//   const launcherPath = path.join(__dirname, 'launcher.js');
-//   return {
-//     'launcher.js': new FileFsRef({ fsPath: launcherPath }),
-//     'bridge.js': new FileFsRef({ fsPath: bridge }),
-//   };
-// };
 
 export function getMountPoint(entrypoint: string) {
   const entrypointName = path.basename(entrypoint);
@@ -32,14 +19,6 @@ export function getMountPoint(entrypoint: string) {
 
   return path.dirname(entrypoint);
 }
-
-// export async function globAndPrefix(entrypointDir: string, subDir: string) {
-//   const paths = await glob('**', path.join(entrypointDir, subDir));
-//   return Object.keys(paths).reduce((c: any, n: string) => {
-//     c[`${subDir}/${n}`] = paths[n];
-//     return c;
-//   }, {});
-// }
 
 type Mutable<T> = {
   -readonly [P in keyof T]: T[P] extends ReadonlyArray<infer U>
@@ -106,16 +85,6 @@ export function validateEntrypoint(entrypoint: string): void {
     );
   }
 }
-
-// function filterFiles(files, filterFn) {
-//   const newFiles = {}
-//   for (const fileName in files) {
-//     if (filterFn(files)) {
-//       newFiles[fileName] = files[fileName]
-//     }
-//   }
-//   return newFiles
-// }
 
 export function renameFiles(
   files: Files,
@@ -209,10 +178,15 @@ const defaultQuasarConfig: QuasarConfiguration = {
   },
 };
 
+/** cache quasarConfig  */
+let quasarConfigCache: QuasarConfiguration | undefined = undefined;
+
 export function getQuasarConfig(
   rootDir: string,
   quasarConfigName = './quasar.config.js'
 ): QuasarConfiguration {
+  if (quasarConfigCache) return quasarConfigCache;
+
   const load = jiti(rootDir);
 
   let quasarConfigModule = load(quasarConfigName);
@@ -236,6 +210,7 @@ export function getQuasarConfig(
       quasarConfig.ssr[key] =
         defaultQuasarConfig.ssr[key as keyof typeof defaultQuasarConfig['ssr']];
   }
+  quasarConfigCache = quasarConfig;
   return quasarConfig;
 }
 

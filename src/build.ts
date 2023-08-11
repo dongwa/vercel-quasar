@@ -154,15 +154,15 @@ export async function build(opts: BuildOptions): Promise<BuilderOutput> {
 
   // Read quasar.config.js
   const quasarConfigName = 'quasar.config.js';
-  const quasarConfigFile = getQuasarConfig(entrypointPath);
-  consola.log('load quasar config', quasarConfigFile);
+  const quasarConfig = getQuasarConfig(entrypointPath);
+  consola.log('load quasar config', quasarConfig);
 
   // Read options from quasar.config.js otherwise set sensible defaults
   // const staticDir =
   //   quasarConfigFile.dir && quasarConfigFile.dir.static
   //     ? quasarConfigFile.dir.static
   //     : 'static';
-  let publicPath = (quasarConfigFile.build.publicPath || '/_quasar/').replace(
+  let publicPath = (quasarConfig.build.publicPath || '/_quasar/').replace(
     /^\//,
     ''
   );
@@ -171,7 +171,7 @@ export async function build(opts: BuildOptions): Promise<BuilderOutput> {
   const usesServerMiddleware =
     config.internalServer !== undefined
       ? config.internalServer
-      : !!quasarConfigFile.ssr.middlewares;
+      : !!quasarConfig.ssr.middlewares;
   let hasCustomBuildCmd = false;
   const buildSteps = ['build:ssr', 'build'];
   for (const step of buildSteps) {
@@ -195,7 +195,7 @@ export async function build(opts: BuildOptions): Promise<BuilderOutput> {
   // ----------------- Install ssr dependencies -----------------
   startStep('Install dist dependencies');
 
-  const distDir = path.join(entrypointPath, quasarConfigFile.build.distDir);
+  const distDir = path.join(entrypointPath, quasarConfig.build.distDir);
   /**  copy package.json form dist to entrypointPath */
   await fs.copyFile(
     path.join(distDir, 'package.json'),
