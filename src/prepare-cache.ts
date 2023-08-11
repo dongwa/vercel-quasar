@@ -10,8 +10,15 @@ async function prepareCache({
 }: PrepareCacheOptions): Promise<Files> {
   startStep('Collect cache');
 
-  const conf = getQuasarConfig(path.dirname(entrypoint));
-  const distDir = conf.build.distDir;
+  let distDir = 'dist/ssr';
+  try {
+    const conf = getQuasarConfig(path.dirname(entrypoint));
+    distDir = conf.build.distDir;
+  } catch (error) {
+    consola.error(error);
+  }
+
+  console.log('distDir', distDir);
 
   const dirs =
     process.env.QUASAR_CACHE_DISABLED === '1'
