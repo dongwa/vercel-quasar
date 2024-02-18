@@ -1,12 +1,14 @@
-import path from 'path';
-import fs from 'fs-extra';
+import path, { dirname, relative, resolve, sep } from 'path';
+import fs, { lstatSync, readFileSync, readlinkSync, statSync } from 'fs-extra';
 import consola from 'consola';
+import { nodeFileTrace } from '@vercel/nft';
+import nftResolveDependency from '@vercel/nft/out/resolve-dependency';
+import { isErrnoException } from '@vercel/error-utils';
 import {
   MutablePackageJson,
   startStep,
   validateEntrypoint,
   readJSON,
-  prepareNodeModules,
   getQuasarConfig,
   exec,
   endStep,
@@ -24,7 +26,10 @@ import {
   glob,
   FileBlob,
   runPackageJsonScript,
-  createLambda,
+  Config,
+  Files,
+  isSymbolicLink,
+  NodejsLambda,
 } from '@vercel/build-utils';
 
 import type { Route } from '@vercel/routing-utils';
@@ -33,6 +38,125 @@ interface BuilderOutput {
   watch?: string[];
   output: Record<string, Lambda | File | FileFsRef>;
   routes: Route[];
+}
+
+async function getPreparedFiles(
+  quasarSSREntry: string,
+  baseDir: string,
+  config: Config
+) {
+  const preparedFiles: Files = {};
+  const inputFiles = new Set<string>([quasarSSREntry]);
+
+  const sourceCache = new Map<string, string | Buffer | null>();
+  const fsCache = new Map<string, File>();
+
+  if (config.includeFiles) {
+    const includeFiles =
+      typeof config.includeFiles === 'string'
+        ? [config.includeFiles]
+        : config.includeFiles;
+
+    for (const pattern of includeFiles) {
+      const files = await glob(pattern, baseDir);
+      await Promise.all(
+        Object.values(files).map(async (entry) => {
+          const { fsPath } = entry;
+          const relPath = relative(baseDir, fsPath);
+          preparedFiles[relPath] = entry;
+        })
+      );
+    }
+  }
+
+  const { fileList, warnings } = await nodeFileTrace([...inputFiles], {
+    base: baseDir,
+    processCwd: baseDir,
+    mixedModules: true,
+    resolve(id, parent, job, cjsResolve) {
+      const normalizedWasmImports = id.replace(/\.wasm\?module$/i, '.wasm');
+      return nftResolveDependency(
+        normalizedWasmImports,
+        parent,
+        job,
+        cjsResolve
+      );
+    },
+    ignore: config.excludeFiles,
+    async readFile(fsPath) {
+      const relPath = relative(baseDir, fsPath);
+
+      // If this file has already been read then return from the cache
+      const cached = sourceCache.get(relPath);
+      if (typeof cached !== 'undefined') return cached;
+
+      try {
+        let entry: File | undefined;
+        let source: string | Buffer = readFileSync(fsPath);
+
+        const { mode } = lstatSync(fsPath);
+        if (isSymbolicLink(mode)) {
+          entry = new FileFsRef({ fsPath, mode });
+        }
+
+        if (!entry) {
+          entry = new FileBlob({ data: source, mode });
+        }
+        fsCache.set(relPath, entry);
+        sourceCache.set(relPath, source);
+        return source;
+      } catch (error: unknown) {
+        if (
+          isErrnoException(error) &&
+          (error.code === 'ENOENT' || error.code === 'EISDIR')
+        ) {
+          // `null` represents a not found
+          sourceCache.set(relPath, null);
+          return null;
+        }
+        throw error;
+      }
+    },
+  });
+
+  for (const warning of warnings) {
+    console.log(`Warning from trace: ${warning.message}`);
+  }
+  for (const path of fileList) {
+    let entry = fsCache.get(path);
+    if (!entry) {
+      const fsPath = resolve(baseDir, path);
+      const { mode } = lstatSync(fsPath);
+      if (isSymbolicLink(mode)) {
+        entry = new FileFsRef({ fsPath, mode });
+      } else {
+        const source = readFileSync(fsPath);
+        entry = new FileBlob({ data: source, mode });
+      }
+    }
+    if (isSymbolicLink(entry.mode) && entry.type === 'FileFsRef') {
+      // ensure the symlink target is added to the file list
+      const symlinkTarget = relative(
+        baseDir,
+        resolve(dirname(entry.fsPath), readlinkSync(entry.fsPath))
+      );
+      if (
+        !symlinkTarget.startsWith('..' + sep) &&
+        !fileList.has(symlinkTarget)
+      ) {
+        const stats = statSync(resolve(baseDir, symlinkTarget));
+        if (stats.isFile()) {
+          fileList.add(symlinkTarget);
+        }
+      }
+    }
+
+    preparedFiles[path] = entry;
+  }
+
+  return {
+    preparedFiles,
+  };
 }
 
 export async function build(opts: BuildOptions): Promise<BuilderOutput> {
@@ -47,8 +171,6 @@ export async function build(opts: BuildOptions): Promise<BuilderOutput> {
   const entrypointDirname = path.dirname(entrypoint);
   // Get quasar path
   const entrypointPath = path.join(workPath, entrypointDirname);
-  // Get folder where we'll store node_modules
-  const modulesPath = path.join(entrypointPath, 'node_modules');
 
   // Create a real filesystem
   consola.log('Downloading files...');
@@ -73,16 +195,12 @@ export async function build(opts: BuildOptions): Promise<BuilderOutput> {
 
   const spawnOpts = getSpawnOptions(meta, nodeVersion);
 
-  /** Not use pnpm at now.TODO:support pnpm */
   const pnpmLockName = 'pnpm-lock.yaml';
   let isPnpm = fs.existsSync(pnpmLockName);
-  if (isPnpm) fs.unlinkSync(pnpmLockName);
-  isPnpm = false;
 
-  // Detect npm (prefer yarn)
   const isYarn = !fs.existsSync('package-lock.json');
 
-  const usingPacker = isYarn ? 'yarn' : 'npm';
+  const usingPacker = isPnpm ? 'pnpm' : isYarn ? 'yarn' : 'npm';
   consola.log('Using', usingPacker);
 
   // Write .npmrc
@@ -114,11 +232,7 @@ export async function build(opts: BuildOptions): Promise<BuilderOutput> {
   await fs.mkdirp(nodeModulesCachePath);
 
   function getInstallOptions(pnpm: boolean, production: boolean) {
-    const noPnpmOptions = [
-      '--non-interactive',
-      `--modules-folder=${modulesPath}`,
-      `--cache-folder=${nodeModulesCachePath}`,
-    ];
+    const noPnpmOptions = ['--non-interactive'];
     const options = [
       '--prefer-offline',
       '--frozen-lockfile',
@@ -130,15 +244,11 @@ export async function build(opts: BuildOptions): Promise<BuilderOutput> {
     return options;
   }
 
-  // TODO: Detect vercel analytics
-  // if (process.env.VERCEL_ANALYTICS_ID) {
-  // }
+  // ----------------- Install Dependencies -----------------
+  startStep('Install Dependencies');
 
-  // ----------------- Install devDependencies -----------------
-  startStep('Install devDependencies');
-
-  // Prepare node_modules
-  await prepareNodeModules(entrypointPath, 'node_modules_dev');
+  // // Prepare node_modules
+  // await prepareNodeModules(entrypointPath, 'node_modules_dev');
   // Install all dependencies
 
   //'non-interactive', 'modules-folder', 'cache-folder'
@@ -150,9 +260,6 @@ export async function build(opts: BuildOptions): Promise<BuilderOutput> {
   );
 
   // ----------------- Pre build -----------------
-
-  // Read quasar.config.js
-  const quasarConfigName = 'quasar.config.js';
   const quasarConfig = getQuasarConfig(entrypointPath);
   consola.log('load quasar config', quasarConfig);
 
@@ -190,51 +297,20 @@ export async function build(opts: BuildOptions): Promise<BuilderOutput> {
   startStep('Install dist dependencies');
 
   const distDir = path.join(entrypointPath, quasarConfig.build.distDir);
-  /**  copy package.json form dist to entrypointPath */
-  await fs.copyFile(
-    path.join(distDir, 'package.json'),
-    path.join(entrypointPath, 'package.json')
-  );
-
-  // Read package.json
-  let pkgOfProd: MutablePackageJson;
-  try {
-    pkgOfProd = await readJSON('package.json');
-    consola.log('pkgOfProd:', pkgOfProd);
-  } catch (e) {
-    throw new Error(`Can not read package.json from ${entrypointPath}`);
-  }
-
-  // Use node_modules_prod cache
-  await prepareNodeModules(entrypointPath, 'node_modules_prod');
-
-  await runNpmInstall(
-    entrypointPath,
-    getInstallOptions(isPnpm, true),
-    {
-      ...spawnOpts,
-      env: {
-        ...spawnOpts.env,
-        NPM_ONLY_PRODUCTION: 'true',
-      },
-    },
-    meta
-  );
 
   // ----------------- Collect artifacts -----------------
   startStep('Collect artifacts');
+
+  const ssrIndex = path.resolve(distDir, 'index.js');
+  const { preparedFiles } = await getPreparedFiles(ssrIndex, workPath, config);
 
   // Client dist files
   const clientDistDir = path.join(distDir, 'client');
   const clientDistFiles = await globAndPrefix('**', clientDistDir, publicPath);
 
   // Server dist files
-  const serverDistDir = path.join(distDir, 'server');
-  const serverDistFiles = await globAndPrefix('**', serverDistDir, 'server');
 
   // node_modules_prod
-  const nodeModulesDir = path.join(entrypointPath, 'node_modules_prod');
-  const nodeModules = await globAndPrefix('**', nodeModulesDir, 'node_modules');
 
   // Lambdas
   const lambdas: Record<string, Lambda> = {};
@@ -245,17 +321,14 @@ export async function build(opts: BuildOptions): Promise<BuilderOutput> {
     String(usesServerMiddleware)
   );
 
-  const launcherFiles = {
-    'vercel__launcher.js': new FileBlob({ data: launcherSrc }),
-    'vercel__bridge.js': new FileFsRef({
-      fsPath: require('@vercel/node-bridge'),
-    }),
-    [quasarConfigName]: new FileFsRef({
-      fsPath: path.resolve(entrypointPath, quasarConfigName),
-    }),
-    ...serverDistFiles,
-    ...nodeModules,
-  };
+  // const launcherFiles = {
+  //   'vercel__launcher.js': new FileBlob({ data: launcherSrc }),
+  //   'vercel__bridge.js': new FileFsRef({
+  //     fsPath: require('@vercel/node-bridge'),
+  //   }),
+  //   ...serverDistFiles,
+  //   ...nodeModules,
+  // };
 
   // Extra files to be included in lambda
   const serverFiles = [
@@ -271,24 +344,29 @@ export async function build(opts: BuildOptions): Promise<BuilderOutput> {
     'render-template.js',
   ];
 
-  for (const pattern of serverFiles) {
-    const files = await glob(pattern, distDir);
-    Object.assign(launcherFiles, files);
-  }
+  // for (const pattern of serverFiles) {
+  //   const files = await glob(pattern, distDir);
+  //   Object.assign(launcherFiles, files);
+  // }
+  // "nodejs" runtime is the default
+  const shouldAddHelpers = !(
+    config.helpers === false || process.env.NODEJS_HELPERS === '0'
+  );
 
   // lambdaName will be titled index, unless specified in quasar.config.js
-  lambdas[lambdaName] = await createLambda({
-    handler: 'vercel__launcher.launcher',
+  lambdas[lambdaName] = new NodejsLambda({
+    files: preparedFiles,
+    handler: ssrIndex,
     runtime: nodeVersion.runtime,
-    files: launcherFiles,
-    environment: {
-      NODE_ENV: 'production',
-      DEV: '',
-      PROD: 'true',
-    },
-    //
+    // environment: {
+    //   NODE_ENV: 'production',
+    //   DEV: '',
+    //   PROD: 'true',
+    // },
     maxDuration: config.maxDuration as number | undefined,
     memory: config.memory as number | undefined,
+    shouldAddHelpers,
+    shouldAddSourcemapSupport: false,
   });
 
   endStep();
