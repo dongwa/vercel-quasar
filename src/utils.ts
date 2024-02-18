@@ -178,13 +178,23 @@ const defaultQuasarConfig: QuasarConfiguration = {
   },
 };
 
-export function getQuasarConfig(
-  rootDir: string,
-  quasarConfigName = './quasar.config.js'
-): QuasarConfiguration {
-  const load = jiti(rootDir);
+export const supportExt = ['.mjs', '.cjs', '.js', '.mts', '.ts'];
+export const quasarConfigNameWithoutExt = 'quasar.config';
 
-  let quasarConfigModule = load(quasarConfigName);
+export function getQuasarConfigFileName(rootDir: string) {
+  for (const ext of supportExt) {
+    const fileName = `${quasarConfigNameWithoutExt}${ext}`;
+    const p = path.join(rootDir, fileName);
+    if (fs.existsSync(p)) return fileName;
+  }
+  throw new Error(`Can not read ${quasarConfigNameWithoutExt} from ${rootDir}`);
+}
+
+export function getQuasarConfig(rootDir: string): QuasarConfiguration {
+  const load = jiti(rootDir);
+  const quasarConfigfileName = getQuasarConfigFileName(rootDir);
+
+  let quasarConfigModule = load(`./${quasarConfigfileName}`);
   if (quasarConfigModule.default)
     quasarConfigModule = quasarConfigModule.default;
 
@@ -206,15 +216,6 @@ export function getQuasarConfig(
         defaultQuasarConfig.ssr[key as keyof typeof defaultQuasarConfig['ssr']];
   }
   return quasarConfig;
-}
-
-export function getNuxtConfigName(rootDir: string): string {
-  for (const filename of ['nuxt.config.ts', 'nuxt.config.js']) {
-    if (fs.existsSync(path.resolve(rootDir, filename))) {
-      return filename;
-    }
-  }
-  throw new Error(`Can not read nuxt.config from ${rootDir}`);
 }
 
 export async function prepareNodeModules(
