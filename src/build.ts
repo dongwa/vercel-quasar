@@ -321,14 +321,13 @@ export async function build(opts: BuildOptions): Promise<BuilderOutput> {
     String(usesServerMiddleware)
   );
 
-  // const launcherFiles = {
-  //   'vercel__launcher.js': new FileBlob({ data: launcherSrc }),
-  //   'vercel__bridge.js': new FileFsRef({
-  //     fsPath: require('@vercel/node-bridge'),
-  //   }),
-  //   ...serverDistFiles,
-  //   ...nodeModules,
-  // };
+  const launcherFiles = {
+    'vercel__launcher.js': new FileBlob({ data: launcherSrc }),
+    'vercel__bridge.js': new FileFsRef({
+      fsPath: require('@vercel/node-bridge'),
+    }),
+    ...preparedFiles,
+  };
 
   // Extra files to be included in lambda
   const serverFiles = [
@@ -355,8 +354,8 @@ export async function build(opts: BuildOptions): Promise<BuilderOutput> {
 
   // lambdaName will be titled index, unless specified in quasar.config.js
   lambdas[lambdaName] = new NodejsLambda({
-    files: preparedFiles,
-    handler: ssrIndex,
+    files: launcherFiles,
+    handler: 'vercel__launcher.launcher',
     runtime: nodeVersion.runtime,
     // environment: {
     //   NODE_ENV: 'production',
