@@ -53,7 +53,7 @@ export async function listen({ app, port, isReady, ssrHandler }) {
 }
 ```
 
-## 3. Custom build command
+## 3. Custom build command （Optional!）
 
 ### The default build command is `npx quasar build -m ssr`,if you want to use custom it,add a `build:ssr` or `build` script to your package.json
 
