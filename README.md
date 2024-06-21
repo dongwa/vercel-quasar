@@ -71,7 +71,7 @@ export async function listen({ app, port, isReady, ssrHandler }) {
   "scripts": {
     "dev": "quasar dev",
     "dev:ssr": "quasar dev -m ssr",
-    "build:ssr": "node build/index.js && quasar build -m ssr"
+    "build:ssr": "quasar build -m ssr"
   },
   "dependencies": {},
   "devDependencies": {}
