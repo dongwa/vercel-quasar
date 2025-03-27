@@ -1,11 +1,12 @@
 import path from 'path';
 import { SpawnOptions } from 'child_process';
-
 import { glob, Files, PackageJson } from '@vercel/build-utils';
-import consola from 'consola';
-import jiti from 'jiti';
 import execa, { ExecaReturnValue } from 'execa';
 import fs from 'fs-extra';
+
+// import type { ConfigureCallback } from '@quasar/app-vite';
+
+// export type QuasarConf = Awaited<ReturnType<ConfigureCallback>>;
 
 import type { IOptions } from 'glob';
 
@@ -35,7 +36,7 @@ export function exec(
 ): Promise<ExecaReturnValue> {
   args = args.filter(Boolean);
 
-  consola.log('Running', cmd, ...args);
+  console.log('Running', cmd, ...args);
   const stdio = Array.isArray(opts.stdio)
     ? (opts.stdio.filter(Boolean) as Array<
         SpawnOptions['stdio'] extends Array<infer R>
@@ -129,7 +130,7 @@ export function endStep(): void {
     return;
   }
   if (_step && _stepStartTime) {
-    consola.info(`${_step} took: ${hrToMs(_stepStartTime)} ms`);
+    console.info(`${_step} took: ${hrToMs(_stepStartTime)} ms`);
   }
   _step = undefined;
   _stepStartTime = undefined;
@@ -137,7 +138,7 @@ export function endStep(): void {
 
 export function startStep(step: string): void {
   endStep();
-  consola.log(dash + step + dash);
+  console.log(dash + step + dash);
   _step = step;
   _stepStartTime = process.hrtime();
 }
@@ -178,32 +179,41 @@ const defaultQuasarConfig: QuasarConfiguration = {
   },
 };
 
-export function getQuasarConfig(
-  rootDir: string,
-  quasarConfigName = './quasar.config.js'
-): QuasarConfiguration {
-  const load = jiti(rootDir);
-
-  let quasarConfigModule = load(quasarConfigName);
-  if (quasarConfigModule.default)
-    quasarConfigModule = quasarConfigModule.default;
-
-  let quasarConfig = quasarConfigModule({
-    dev: false,
+export async function getQuasarConfig(
+  rootDir: string
+): Promise<QuasarConfiguration> {
+  const { getCtx } = await import(
+    `${rootDir}/node_modules/@quasar/app-vite/lib/utils/get-ctx.js`
+  );
+  const ctx = getCtx({
+    mode: 'ssr',
     prod: true,
   });
 
+  const { QuasarConfigFile } = (await import(
+    `${rootDir}/node_modules/@quasar/app-vite/lib/quasar-config-file.js`
+  )) as { QuasarConfigFile: any };
+  const quasarConfFile = new QuasarConfigFile({
+    ctx,
+  });
+
+  await quasarConfFile.init();
+
+  let quasarConfig = await quasarConfFile.read();
+  console.log('quasarConfig', quasarConfig);
   for (let key in defaultQuasarConfig.build) {
     if (!quasarConfig.build[key])
       quasarConfig.build[key] =
         defaultQuasarConfig.build[
-          key as keyof typeof defaultQuasarConfig['build']
+          key as keyof (typeof defaultQuasarConfig)['build']
         ];
   }
   for (let key in defaultQuasarConfig.ssr) {
     if (!quasarConfig.ssr[key])
       quasarConfig.ssr[key] =
-        defaultQuasarConfig.ssr[key as keyof typeof defaultQuasarConfig['ssr']];
+        defaultQuasarConfig.ssr[
+          key as keyof (typeof defaultQuasarConfig)['ssr']
+        ];
   }
   return quasarConfig;
 }
@@ -226,7 +236,7 @@ export async function prepareNodeModules(
   try {
     const prodPath = path.join(entrypointPath, modulesDir);
     if (fs.existsSync(prodPath)) {
-      consola.log(`Using cached ${modulesDir}`);
+      console.log(`Using cached ${modulesDir}`);
     }
     try {
       if (fs.existsSync(modulesPath)) {
@@ -242,6 +252,6 @@ export async function prepareNodeModules(
     }
     await fs.symlink(modulesDir, modulesPath);
   } catch (e) {
-    consola.log(`Error linking/unlinking ${modulesDir}.`, e);
+    console.log(`Error linking/unlinking ${modulesDir}.`, e);
   }
 }

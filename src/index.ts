@@ -1,10 +1,7 @@
-import { build } from './build';
-import config from './config';
-import prepareCache from './prepare-cache';
+export { build } from './build.js';
+import config from './config.js';
+import prepareCache from './prepare-cache.js';
 
-module.exports = {
-  version: 2,
-  build,
-  config,
-  prepareCache,
-};
+export const version = 2;
+
+export { config, prepareCache };

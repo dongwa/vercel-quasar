@@ -6,35 +6,25 @@ Help you to deploy [Quasar](https://quasar.dev) application on [Vercel](https://
 
 # usage
 
-## 1. change the listen function in your `src-ssr/server.js` file
+## 1. change the listen function in your `src-ssr/server.js|ts` file
 
 - return { handler: ssrHandler }
 
 ```js
-/**
- * The "listenResult" param for the "close()" definition below
- * is what you return here.
- *
- * For production, you can instead export your
- * handler for serverless use or whatever else fits your needs.
- */
-export async function listen({ app, port, isReady, ssrHandler }) {
+export const listen = defineSsrListen(({ app, devHttpsApp, port }) => {
+  const server = devHttpsApp || app;
   if (process.env.DEV) {
-    await isReady();
-    return await app.listen(port, () => {
+    return server.listen(port, () => {
       if (process.env.PROD) {
         console.log('Server listening at port ' + port);
       }
     });
   } else {
-    // in production
-    // "ssrHandler" is a prebuilt handler which already
-    // waits for all the middlewares to run before serving clients
-
-    // whatever you return here is equivalent to module.exports.<key> = <value>
-    return { handler: ssrHandler };
+    return {
+      handler: server,
+    };
   }
-}
+});
 ```
 
 ## 2. Configure `vercel-quasar` as builder in `vercel.json`
@@ -47,7 +37,7 @@ export async function listen({ app, port, isReady, ssrHandler }) {
   "builds": [
     {
       "src": "package.json",
-      "use": "vercel-quasar"
+      "use": "vercel-quasar@2.0.0-beta.3"
     }
   ]
 }
@@ -77,3 +67,8 @@ export async function listen({ app, port, isReady, ssrHandler }) {
   "devDependencies": {}
 }
 ```
+
+# demo
+
+Here is a demo repo
+https://github.com/dongwa/quasar-ssr-vercel-demo

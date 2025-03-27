@@ -1,24 +1,21 @@
-import path from 'path';
 import { Server } from 'http';
 
 // Create bridge and start listening
 let listener: any;
 
 async function createLauncher(event: any, context: any) {
-  //@ts-ignore
-  const { Bridge } = (await import('./vercel__bridge.js'))
-    .default as typeof import('@vercel/node-bridge/bridge');
+  // @ts-ignore
+  const { Bridge } = (await import('__WILL_REPLACED_TO_REAL_PATH__')).default;
 
   try {
-    process.chdir(__dirname);
     if (!process.env.NODE_ENV) process.env.NODE_ENV = 'production';
+
     if (process.env.DEV) {
       console.log('err dev mode,auto change to prod');
       throw new Error('process.env.DEV is true');
     }
 
-    const quasarServerModule = (await import(path.join(__dirname, 'index.js')))
-      .default;
+    const quasarServerModule = await import('./index.js');
 
     listener = quasarServerModule;
     if (listener.default) listener = listener.default;

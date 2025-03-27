@@ -1,5 +1,5 @@
-import consola from 'consola';
-import { startStep, endStep } from './utils';
+import console from 'console';
+import { startStep, endStep } from './utils.js';
 import { PrepareCacheOptions, glob, Files } from '@vercel/build-utils';
 
 async function prepareCache({ workPath }: PrepareCacheOptions): Promise<Files> {
@@ -13,7 +13,7 @@ async function prepareCache({ workPath }: PrepareCacheOptions): Promise<Files> {
   const cache: Files = {};
   for (const dir of dirs) {
     const files = await glob(`**/${dir}/**`, workPath);
-    consola.info(`${Object.keys(files).length} files collected from ${dir}`);
+    console.info(`${Object.keys(files).length} files collected from ${dir}`);
     Object.assign(cache, files);
   }
   endStep();

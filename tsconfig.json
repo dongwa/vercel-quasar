@@ -1,17 +1,15 @@
 {
   "compilerOptions": {
-    "target": "ESNext" /* Specify ECMAScript target version: 'ES3' (default), 'ES5', 'ES2015', 'ES2016', 'ES2017', 'ES2018', 'ES2019', 'ES2020', 'ES2021', or 'ESNEXT'. */,
-    "module": "commonjs" /* Specify module code generation: 'none', 'commonjs', 'amd', 'system', 'umd', 'es2015', 'es2020', or 'ESNext'. */,
+    "module": "NodeNext",
     "lib": ["ESNext"],
-    "rootDir": "src",
     "outDir": "./dist",
     "declaration": true,
     "strict": true /* Enable all strict type-checking options. */,
     "esModuleInterop": true /* Enables emit interoperability between CommonJS and ES Modules via creation of namespace objects for all imports. Implies 'allowSyntheticDefaultImports'. */,
     "skipLibCheck": true /* Skip type checking of declaration files. */,
-    "resolveJsonModule": true,
-    "forceConsistentCasingInFileNames": true, /* Disallow inconsistently-cased references to the same file. */
-    "skipDefaultLibCheck": true
+    "forceConsistentCasingInFileNames": true /* Disallow inconsistently-cased references to the same file. */,
+    "skipDefaultLibCheck": true,
+    "resolveJsonModule": true
   },
-  "exclude": ["node_modules","tests","dist"]
+  "exclude": ["node_modules", "tests", "dist"]
 }
